@@ -36,8 +36,16 @@ arranca sin proyectos publicados y el diseño lo declara en vez de disimularlo.
 
 ## Color
 
-Siete tokens, dos temas. Los valores crudos se definen en `:root` (claro) y `.dark`
-(oscuro); `@theme inline` los traduce a los nombres que entiende Tailwind.
+Siete tokens, dos temas.
+
+Las dos paletas se declaran completas en `:root`, con los prefijos `--light-*` y
+`--dark-*`. Cada valor hexadecimal aparece **una sola vez en todo el proyecto**. Los
+siete tokens que usa el sitio (`--ink`, `--fore`, …) no contienen valores: apuntan a una
+de las dos paletas según el tema activo. Eso importa porque hay tres bloques que hacen
+ese apuntado —`:root`, `.dark` y el respaldo por consulta de medios— y si cada uno
+repitiera los valores, tarde o temprano se desincronizarían.
+
+`@theme inline` traduce esos siete tokens a los nombres que entiende Tailwind.
 
 | Token | Claro | Oscuro | Para qué |
 |---|---|---|---|
@@ -106,9 +114,13 @@ Hay que distinguir dos conceptos que se confunden con facilidad:
 
 - **La preferencia** es lo que eligió la persona: `system`, `light` o `dark`. Vive en
   `localStorage` y se refleja en el atributo `data-theme-preference` del `<html>`.
-- **El tema resuelto** es lo que se pinta: claro u oscuro. Se expresa con la presencia o
-  ausencia de la clase `.dark` en el `<html>`. Con la preferencia en `system`, el tema
-  resuelto surge de consultar `prefers-color-scheme`.
+- **El tema resuelto** es lo que se pinta: claro u oscuro. Se expresa con la clase
+  `.dark` en el `<html>` y con el atributo `data-theme-resolved`. Con la preferencia en
+  `system`, el tema resuelto surge de consultar `prefers-color-scheme`.
+
+El atributo `data-theme-resolved` cumple una segunda función además de informar: es la
+señal de que el script ya corrió. De eso depende el respaldo en CSS que se describe más
+abajo.
 
 ### Por qué una variante personalizada
 
@@ -127,6 +139,34 @@ gane peleas de precedencia que no le corresponden.
 Consecuencia: la preferencia del sistema deja de aplicarse sola. Traducirla a la clase
 pasa a ser responsabilidad del script de arranque.
 
+### El respaldo en CSS puro
+
+Delegar el tema al script deja un agujero: si JavaScript está deshabilitado o el script
+es bloqueado, alguien con el sistema en oscuro recibe la paleta clara. La primera
+versión de este sistema tenía ese defecto y lo detectó una revisión de código.
+
+El respaldo:
+
+```css
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme-resolved]) {
+    color-scheme: dark;
+    --ink: var(--dark-ink);
+    /* … el resto de la paleta oscura */
+  }
+}
+```
+
+La condición `:not([data-theme-resolved])` es la clave: el bloque aplica **solo mientras
+el script no haya corrido**. Apenas el script escribe el atributo, la regla deja de
+coincidir y el control vuelve a la clase `.dark`. Como el script vive en el `<head>` y se
+ejecuta antes del primer pintado, el traspaso no produce ningún parpadeo.
+
+Alcance del respaldo: cubre las variables de color, que es de donde sale la mayor parte
+del estilo del sitio. Las utilidades con prefijo `dark:` de Tailwind siguen dependiendo
+de la clase y no se aplican sin JavaScript. Por eso el proyecto estiliza con tokens
+(`bg-ink`, `text-fore`) y reserva `dark:` para casos excepcionales.
+
 ### Por qué un script bloqueante y no `useEffect`
 
 El script vive en [`src/lib/theme.ts`](../src/lib/theme.ts) y se inyecta en el `<head>`
@@ -144,6 +184,13 @@ reportaría una discrepancia entre el HTML del servidor y el del navegador.
 
 El script está escrito en JavaScript antiguo (`var`, sin sintaxis moderna) porque se
 ejecuta tal cual, sin pasar por ningún compilador.
+
+El `try` envuelve **únicamente** la lectura de `localStorage`, que es lo único capaz de
+fallar: el navegador lanza un error si la persona bloqueó los datos del sitio o si la
+página corre dentro de un iframe restringido. Una versión anterior envolvía todo el
+script, con lo cual un `localStorage` inaccesible abortaba la ejecución antes de llegar a
+`matchMedia` y el tema nunca se aplicaba. Un bloque `try` demasiado ancho convierte un
+fallo menor en un fallo total.
 
 La lista de valores válidos no está escrita a mano dentro del script: se interpola desde
 `themePreferenceSchema.options`, el mismo esquema de Zod que valida la preferencia en el
@@ -209,6 +256,13 @@ Todo se apaga con `prefers-reduced-motion: reduce`.
 Las duraciones se anulan a `0.01ms` y no a `0`. Con cero, algunos navegadores nunca
 disparan el evento de fin de animación, y cualquier código que espere ese aviso queda
 colgado para siempre. Con 0.01 ms el evento se dispara de inmediato.
+
+Se anulan las duraciones **y también los retrasos** (`animation-delay`,
+`transition-delay`). Anular solo las duraciones es un error frecuente: la animación pasa
+a durar un instante, pero sigue esperando su retraso antes de empezar. En una secuencia
+escalonada como la del hero, eso dejaría a quien pidió menos movimiento mirando una
+pantalla vacía durante toda la espera — exactamente el problema que la preferencia
+buscaba evitar.
 
 ---
 
