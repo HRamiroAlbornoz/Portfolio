@@ -196,6 +196,59 @@ La lista de valores válidos no está escrita a mano dentro del script: se inter
 `themePreferenceSchema.options`, el mismo esquema de Zod que valida la preferencia en el
 resto de la aplicación. Un solo lugar define los estados posibles.
 
+### Por qué interpolar en ese script es seguro por construcción
+
+Dentro de una etiqueta `<script>`, el analizador de HTML deja de interpretar HTML con una
+sola excepción: sigue buscando la secuencia literal `</script`. Apenas la encuentra cierra
+la etiqueta, aunque esté en medio de un texto entre comillas. Un valor que contuviera
+`</script><script>…</script>` cerraría el script y ejecutaría lo que viniera después. Las
+comillas alrededor de la interpolación no protegen, porque el analizador de HTML actúa
+antes que el de JavaScript.
+
+Hoy todas las interpolaciones del script son constantes del propio código, así que no hay
+vector de ataque. Pero depender de que nadie interpole nunca un valor dinámico es
+depender de la memoria de las personas. El proyecto lo resuelve con cuatro mecanismos:
+
+**Las comillas las genera el serializador, no la plantilla.** `JSON.stringify` produce un
+literal de JavaScript completo: agrega las comillas y escapa las que haya adentro, las
+barras invertidas y los saltos de línea.
+
+**El carácter `<` se escapa como `\u003c`.** Para JavaScript, `\u003c` *es* `<`: el valor
+no cambia en absoluto. Pero el analizador de HTML nunca ve el carácter, así que la
+secuencia `</script` no puede formarse.
+
+**El compilador rechaza las interpolaciones crudas.** `toScriptLiteral` devuelve un tipo
+marcado, `ScriptLiteral`, y la plantilla `inlineScript` solo acepta valores de ese tipo.
+Un `string` común no es asignable, así que interpolar sin serializar **no compila**:
+
+```
+error TS2345: Argument of type 'string' is not assignable
+              to parameter of type 'ScriptLiteral'
+```
+
+Como `npm run typecheck` corre en el CI, ese error bloquea el Pull Request.
+
+**ESLint impide que el patrón se propague.** La regla `react/no-danger` está en `error`
+para todo el proyecto, con una excepción declarada en `eslint.config.mjs` acotada
+únicamente a `src/app/layout.tsx`. La excepción vive en la configuración y no como un
+comentario en el código, para que sea visible y revisable en un solo lugar.
+
+#### Sobre la aserción de tipo
+
+`toScriptLiteral` contiene un `as ScriptLiteral`, y las reglas del proyecto exigen evitar
+las aserciones de tipo y justificar las inevitables.
+
+Es inevitable acá: la marca de `ScriptLiteral` es una ficción del sistema de tipos que no
+existe en tiempo de ejecución, y la única forma de colocarla es afirmándola. Es **una sola
+aserción, dentro de la única función autorizada a crear el tipo marcado**, que es
+exactamente el patrón conocido como *branded type*. Fuera de esa función el tipo no se
+puede fabricar por accidente.
+
+Límite honesto de la protección: garantiza que el valor **entre** intacto al script, no
+que el script haga cosas seguras con él. Si alguna vez se agregara un `eval` o una
+asignación a `innerHTML` dentro del script, el problema volvería por otro camino. Eso lo
+cubre la revisión de código, no el tipado.
+
 ### `color-scheme`
 
 `:root` y `.dark` declaran `color-scheme`. Le indica al navegador con qué tema pintar
