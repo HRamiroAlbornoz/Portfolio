@@ -2,17 +2,23 @@ import { defineConfig, globalIgnores } from "eslint/config";
 import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";
 
+const THEME_SCRIPT_HOST = "src/app/layout.tsx";
+
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
-  // Override default ignores of eslint-config-next.
-  globalIgnores([
-    // Default ignores of eslint-config-next:
-    ".next/**",
-    "out/**",
-    "build/**",
-    "next-env.d.ts",
-  ]),
+  globalIgnores([".next/**", "out/**", "build/**", "next-env.d.ts"]),
+  {
+    rules: {
+      "react/no-danger": "error",
+    },
+  },
+  {
+    files: [THEME_SCRIPT_HOST],
+    rules: {
+      "react/no-danger": "off",
+    },
+  },
 ]);
 
 export default eslintConfig;
