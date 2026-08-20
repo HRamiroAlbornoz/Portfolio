@@ -3,15 +3,31 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
+  --light-ink: #f7f8f9;
+  --light-surface: #ffffff;
+  --light-line: #d3d9e0;
+  --light-muted: #5a6673;
+  --light-fore: #0f1216;
+  --light-trace: #0c6a55;
+  --light-pending: #8a6d0b;
+
+  --dark-ink: #0f1216;
+  --dark-surface: #171b21;
+  --dark-line: #2b3138;
+  --dark-muted: #98a2ae;
+  --dark-fore: #e9edf2;
+  --dark-trace: #6ee7c8;
+  --dark-pending: #c9a227;
+
   color-scheme: light;
 
-  --ink: #f7f8f9;
-  --surface: #ffffff;
-  --line: #d3d9e0;
-  --muted: #5a6673;
-  --fore: #0f1216;
-  --trace: #0c6a55;
-  --pending: #8a6d0b;
+  --ink: var(--light-ink);
+  --surface: var(--light-surface);
+  --line: var(--light-line);
+  --muted: var(--light-muted);
+  --fore: var(--light-fore);
+  --trace: var(--light-trace);
+  --pending: var(--light-pending);
 
   --stack-display: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
   --stack-body: var(--font-instrument-sans), ui-sans-serif, system-ui, sans-serif;
@@ -23,13 +39,27 @@
 .dark {
   color-scheme: dark;
 
-  --ink: #0f1216;
-  --surface: #171b21;
-  --line: #2b3138;
-  --muted: #98a2ae;
-  --fore: #e9edf2;
-  --trace: #6ee7c8;
-  --pending: #c9a227;
+  --ink: var(--dark-ink);
+  --surface: var(--dark-surface);
+  --line: var(--dark-line);
+  --muted: var(--dark-muted);
+  --fore: var(--dark-fore);
+  --trace: var(--dark-trace);
+  --pending: var(--dark-pending);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme-resolved]) {
+    color-scheme: dark;
+
+    --ink: var(--dark-ink);
+    --surface: var(--dark-surface);
+    --line: var(--dark-line);
+    --muted: var(--dark-muted);
+    --fore: var(--dark-fore);
+    --trace: var(--dark-trace);
+    --pending: var(--dark-pending);
+  }
 }
 
 @theme inline {
@@ -96,8 +126,10 @@
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
+    animation-delay: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+    transition-delay: 0.01ms !important;
     scroll-behavior: auto !important;
   }
 }
