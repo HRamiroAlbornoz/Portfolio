@@ -18,8 +18,14 @@ La metáfora se cobra **solo donde es cierta**: en la sección Stack, donde la t
 ramifica en las capas reales (Interfaz, Lógica, Datos, Herramientas). En el resto del
 sitio la traza es un hilo de navegación silencioso.
 
-En la sección Proyectos la traza se vuelve punteada y el nodo queda hueco. El portfolio
-arranca sin proyectos publicados y el diseño lo declara en vez de disimularlo.
+La sección Proyectos contempla dos estados. Cuando no hay ninguno cargado, la traza se
+vuelve punteada y el nodo queda hueco: el diseño declara el vacío en vez de disimularlo.
+Cuando hay proyectos, la traza sigue entera y la sección muestra las tarjetas.
+
+El estado vacío se diseñó primero porque el brief original planteaba un portfolio sin
+proyectos. Al aparecer tres proyectos reales, el estado dejó de verse pero se conservó en
+el código: es lo que permite que agregar o quitar un proyecto sea editar un archivo de
+datos, sin tocar un solo componente.
 
 ### Qué se descartó y por qué
 
