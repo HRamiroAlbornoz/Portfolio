@@ -97,17 +97,37 @@ curl -s -o /dev/null -w "%{http_code}\n" -L https://tu-proyecto.vercel.app
 Un `200` está bien. Un `404` significa que el deploy ya no existe: omití `liveUrl` hasta
 volver a publicarlo.
 
-**Los campos opcionales se omiten, no se ponen en `undefined`.** El proyecto usa
-`exactOptionalPropertyTypes`, que distingue "el campo no está" de "el campo está y vale
-`undefined`". Escribir `liveUrl: undefined` es un error de compilación; simplemente no
-escribas la línea.
+**Los campos opcionales se omiten, no se ponen en `undefined`.** Es una convención del
+proyecto, no una regla que el compilador haga cumplir: Zod infiere las propiedades
+opcionales como `liveUrl?: string | undefined`, y ese `| undefined` explícito hace que
+asignarlo sea legal aunque el proyecto use `exactOptionalPropertyTypes`. Escribí la línea
+solo cuando tengas el valor.
 
 ---
 
 ## Qué pasa si algo está mal
 
-El array se valida con Zod **durante el build**, no cuando alguien visita el sitio. Un
-dato inválido rompe `npm run build` con un mensaje que indica el campo exacto.
+Hay **dos redes de seguridad**, y conviene saber cuál te va a atrapar cada error.
+
+### TypeScript, mientras escribís
+
+El array lleva `satisfies z.input<typeof projectsSchema>` al final. Eso hace que el
+compilador revise la **forma** del objeto en el editor, antes de correr nada. El error
+aparece subrayado en el momento, y `npm run typecheck` lo confirma.
+
+| Error | Qué vas a ver |
+|---|---|
+| Falta un campo obligatorio | `TS2741: Property 'technologies' is missing` |
+| Un campo con el tipo equivocado | `TS2322: Type 'string' is not assignable to type 'number'` |
+| Un campo inventado o mal escrito | `TS2353: Object literal may only specify known properties` |
+
+Sin ese `satisfies`, nada de esto se detectaría: `parse()` recibe `unknown`, así que
+TypeScript ni siquiera mira lo que le pasás.
+
+### Zod, durante el build
+
+Las reglas que dependen del **valor** y no de la forma solo se pueden comprobar
+ejecutando código. Rompen `npm run build` con el archivo y la línea exactos.
 
 | Error | Qué vas a ver |
 |---|---|
@@ -115,10 +135,15 @@ dato inválido rompe `npm run build` con un mensaje que indica el campo exacto.
 | `slug` con mayúsculas o espacios | `Usá solo minúsculas, números y guiones` |
 | URL que no es `http` ni `https` | `Invalid URL` |
 | `summary` de más de 700 caracteres | `Too big: expected string to have <=700 characters` |
-| `year` escrito como texto | `Invalid input: expected number, received string` |
-| Falta un campo obligatorio | `Invalid input: expected string, received undefined` |
+| Más de 3 `highlights` o más de 12 tecnologías | `Too big: expected array to have <=3 items` |
 
 Eso es deliberado: **es preferible que el build falle a que el sitio se publique roto.**
+
+Y hay una condición para que esa segunda red exista: **algún componente tiene que
+importar el archivo de contenido.** Zod valida cuando el módulo se carga, y Next.js solo
+carga lo que es alcanzable desde una página. Si nadie lo importa, el `parse()` nunca
+corre y el archivo es código muerto. Hoy los cinco archivos de `src/content/` los usa
+`src/app/page.tsx`.
 
 ---
 
