@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Archivo, Instrument_Sans, JetBrains_Mono } from "next/font/google";
 
+import { site } from "@/content/site";
+import { env } from "@/lib/env";
 import { DEFAULT_THEME_PREFERENCE, themeInitScript } from "@/lib/theme";
 import "./globals.css";
 
@@ -29,9 +31,9 @@ const fontVariables = [
 ].join(" ");
 
 export const metadata: Metadata = {
-  title: "Hernán Ramiro Albornoz — Desarrollador Full Stack",
-  description:
-    "Portfolio de Hernán Ramiro Albornoz, desarrollador Full Stack egresado de Henry.",
+  metadataBase: new URL(env.siteUrl),
+  title: `${site.name} — ${site.role}`,
+  description: site.tagline,
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
