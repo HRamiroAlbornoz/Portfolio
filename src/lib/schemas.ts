@@ -48,10 +48,22 @@ export const socialLinkSchema = z.object({
   url: z.httpUrl(),
 });
 
+const internalPdfPath = z
+  .string()
+  .trim()
+  .regex(
+    /^\/[A-Za-z0-9][A-Za-z0-9._~\-/]*\.pdf$/,
+    "Usá una ruta interna del sitio que empiece con una sola barra y termine en .pdf",
+  )
+  .refine(
+    (path) => !path.split("/").includes(".."),
+    "La ruta no puede contener segmentos '..'",
+  );
+
 export const resumeSchema = z.object({
   label,
   language: z.enum(["es", "en"]),
-  path: z.string().trim().startsWith("/").endsWith(".pdf"),
+  path: internalPdfPath,
 });
 
 export const siteSchema = z.object({
