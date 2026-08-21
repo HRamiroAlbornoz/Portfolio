@@ -1,3 +1,5 @@
+import type { z } from "zod";
+
 import { educationSchema } from "@/lib/schemas";
 
 export const education = educationSchema.parse([
@@ -12,4 +14,4 @@ export const education = educationSchema.parse([
       "Proyecto final: NEXOPAY, billetera digital multimoneda construida en equipo de 3",
     ],
   },
-]);
+] satisfies z.input<typeof educationSchema>);

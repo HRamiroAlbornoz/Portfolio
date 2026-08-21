@@ -1,3 +1,5 @@
+import type { z } from "zod";
+
 import { stackSchema } from "@/lib/schemas";
 
 export const stack = stackSchema.parse([
@@ -38,4 +40,4 @@ export const stack = stackSchema.parse([
       "Vercel",
     ],
   },
-]);
+] satisfies z.input<typeof stackSchema>);

@@ -1,3 +1,5 @@
+import type { z } from "zod";
+
 import { siteSchema } from "@/lib/schemas";
 
 export const site = siteSchema.parse({
@@ -24,4 +26,4 @@ export const site = siteSchema.parse({
     { label: "Español", language: "es", path: "/cv/hernan-albornoz-cv.pdf" },
     { label: "English", language: "en", path: "/cv/hernan-albornoz-cv-en.pdf" },
   ],
-});
+} satisfies z.input<typeof siteSchema>);

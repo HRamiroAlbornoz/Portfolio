@@ -1,3 +1,5 @@
+import type { z } from "zod";
+
 import { projectsSchema } from "@/lib/schemas";
 
 export const projects = projectsSchema.parse([
@@ -56,4 +58,4 @@ export const projects = projectsSchema.parse([
     repositoryUrl:
       "https://github.com/HRamiroAlbornoz/ProyectoM4_HernanRamiroAlbornoz",
   },
-]);
+] satisfies z.input<typeof projectsSchema>);
