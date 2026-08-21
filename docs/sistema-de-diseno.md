@@ -7,6 +7,13 @@ Todo el sistema vive en un solo archivo, [`src/app/globals.css`](../src/app/glob
 Ningún componente del proyecto escribe un color hexadecimal ni un tamaño de letra
 arbitrario.
 
+> **Estado de implementación.** Este documento describe el diseño completo, no lo que ya
+> está construido. Hoy existen los tokens, la tipografía, el sistema de temas y una
+> página que renderiza todo el contenido con marcado semántico. **La traza, el encabezado
+> y el botón de tema todavía no están construidos**: llegan en la Fase 3. Las secciones
+> que los describen son la especificación a seguir, no una descripción de lo que verías
+> abriendo el sitio hoy.
+
 ---
 
 ## Dirección visual: "Trazado"
