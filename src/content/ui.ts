@@ -11,6 +11,11 @@ export const ui = uiSchema.parse({
     sourceLabel: "Código de este sitio",
     sourceUrl: "https://github.com/HRamiroAlbornoz/Portfolio",
   },
+  projects: {
+    empty: "Todavía sin desplegar",
+    live: "Ver en vivo",
+    repository: "Código",
+  },
   theme: {
     groupLabel: "Tema",
     options: {
