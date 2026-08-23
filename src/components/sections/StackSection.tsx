@@ -17,39 +17,38 @@ export function StackSection({ title }: StackSectionProps) {
 
         <ol className="flex flex-col gap-8">
           {stack.map((layer) => (
-            <li key={layer.id}>
-              <div className="flex items-center gap-4">
-                <span
-                  aria-hidden="true"
-                  className="size-[11px] shrink-0 rounded-full bg-trace"
-                />
-                <span
-                  aria-hidden="true"
-                  className="h-px w-4 shrink-0 bg-trace"
-                />
+            <li className="flex items-start gap-4" key={layer.id}>
+              <span
+                aria-hidden="true"
+                className="mt-px size-[11px] shrink-0 rounded-full bg-trace"
+              />
+              <span
+                aria-hidden="true"
+                className="mt-[6px] h-px w-4 shrink-0 bg-trace"
+              />
+
+              <div className="flex flex-col gap-3">
                 <h3 className="font-mono text-eyebrow uppercase text-trace">
                   {layer.label}
                 </h3>
-              </div>
 
-              <ul className="mt-3 ml-[3.4375rem] flex flex-wrap gap-x-5 gap-y-2 text-body text-muted">
-                {layer.items.map((item) => (
-                  <li className="flex items-center gap-2" key={item.name}>
-                    <TechnologyIcon name={item.icon} />
-                    {item.name}
-                  </li>
-                ))}
-              </ul>
+                <ul className="flex flex-wrap gap-x-5 gap-y-2 text-body text-muted">
+                  {layer.items.map((item) => (
+                    <li className="flex items-center gap-2" key={item.name}>
+                      <TechnologyIcon name={item.icon} />
+                      {item.name}
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </li>
           ))}
         </ol>
 
-        <div className="mt-6 flex items-center gap-4">
-          <span
-            aria-hidden="true"
-            className="size-[11px] shrink-0 rounded-full bg-trace"
-          />
-        </div>
+        <span
+          aria-hidden="true"
+          className="mt-6 block size-[11px] rounded-full bg-trace"
+        />
       </div>
     </PageSection>
   );
