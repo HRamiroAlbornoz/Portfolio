@@ -180,6 +180,20 @@ Caso especial: la última sección es corta y su borde superior nunca alcanza la
 porque la página deja de desplazarse antes. Por eso, al llegar al final, se marca
 directamente la última.
 
+### Vive en la página, no en el layout
+
+La traza está en [`page.tsx`](../src/app/page.tsx), junto a las secciones que navega. El
+encabezado y el pie sí están en el layout.
+
+El criterio: **el layout es el marco de todo el sitio; la traza navega las secciones de
+una página concreta.** Estuvo mal ubicada al principio y el efecto se vio en la página de
+error, que heredaba los seis enlaces `href="#…"` apuntando a identificadores que ahí no
+existen. Además, al vivir en el layout nunca se volvía a montar, así que la sección activa
+quedaba obsoleta al navegar entre rutas.
+
+Por el mismo motivo, el logo del encabezado enlaza a `/` con `next/link` y no a un ancla:
+el encabezado aparece en todas las rutas y un ancla solo funciona donde su destino existe.
+
 ### Se muestra desde 1024 px
 
 Necesita que el contenido esté centrado con margen a los lados. Por debajo de eso, la
@@ -230,7 +244,7 @@ comprometido aunque lo borres.
 
 ## Dependencias
 
-El proyecto agrega tres cosas al andamiaje de `create-next-app`:
+El proyecto agrega dos paquetes al andamiaje de `create-next-app`:
 
 | Paquete | Para qué | Peso en el navegador |
 |---|---|---|
@@ -239,8 +253,13 @@ El proyecto agrega tres cosas al andamiaje de `create-next-app`:
 
 **Descartadas a propósito:** ninguna librería de animación (la traza se resuelve con CSS y
 `requestAnimationFrame`; `framer-motion` pesaría más que todo el resto del sitio),
-ninguna librería de iconos (van cuatro, como SVG), y `shadcn/ui` (para un portfolio, la
-homogeneidad de una librería de componentes juega en contra de tener identidad propia).
+ninguna librería de iconos (los que se sumen van como SVG en línea y monocromos,
+heredando el color del texto, para no meter veinticinco colores de marca ajenos en una
+paleta de siete medidos), y `shadcn/ui` (para un portfolio, la homogeneidad de una
+librería de componentes juega en contra de tener identidad propia).
+
+`public/` no contiene ningún archivo decorativo. Los cinco SVG que trae
+`create-next-app` se eliminaron: nada del código los referenciaba.
 
 ---
 
