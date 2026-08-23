@@ -14,11 +14,10 @@ type TraceRailProps = {
 };
 
 function readScrollProgress(): number {
-  const scrollable =
-    document.documentElement.scrollHeight - window.innerHeight;
+  const scrollable = document.documentElement.scrollHeight - window.innerHeight;
 
   if (scrollable <= 0) {
-    return 1;
+    return 0;
   }
 
   return Math.min(1, Math.max(0, window.scrollY / scrollable));
@@ -26,8 +25,9 @@ function readScrollProgress(): number {
 
 function findSectionAtReadingLine(
   sections: readonly Section[],
+  progress: number,
 ): SectionId | null {
-  if (readScrollProgress() >= BOTTOM_PROGRESS_THRESHOLD) {
+  if (progress >= BOTTOM_PROGRESS_THRESHOLD) {
     return sections[sections.length - 1]?.id ?? null;
   }
 
@@ -37,7 +37,13 @@ function findSectionAtReadingLine(
   for (const section of sections) {
     const element = document.getElementById(section.id);
 
-    if (element !== null && element.getBoundingClientRect().top <= readingLine) {
+    if (element === null) {
+      continue;
+    }
+
+    const box = element.getBoundingClientRect();
+
+    if (box.height > 0 && box.top <= readingLine) {
       current = section.id;
     }
   }
@@ -57,30 +63,47 @@ export function TraceRail({ label, sections }: TraceRailProps) {
     }
 
     let frame = 0;
+    let isRailVisible = false;
+
+    const refreshVisibility = () => {
+      isRailVisible = window.getComputedStyle(rail).display !== "none";
+    };
 
     const paint = () => {
       frame = 0;
-      rail.style.setProperty(
-        SCROLL_PROGRESS_PROPERTY,
-        readScrollProgress().toFixed(4),
-      );
-      setActiveId(findSectionAtReadingLine(sections));
+
+      if (!isRailVisible) {
+        return;
+      }
+
+      const progress = readScrollProgress();
+      const active = findSectionAtReadingLine(sections, progress);
+
+      rail.style.setProperty(SCROLL_PROGRESS_PROPERTY, progress.toFixed(4));
+      setActiveId(active);
     };
 
-    const schedule = () => {
+    const schedulePaint = () => {
       if (frame === 0) {
         frame = window.requestAnimationFrame(paint);
       }
     };
 
+    const handleResize = () => {
+      refreshVisibility();
+      schedulePaint();
+    };
+
+    refreshVisibility();
     paint();
-    window.addEventListener("scroll", schedule, { passive: true });
-    window.addEventListener("resize", schedule);
+
+    window.addEventListener("scroll", schedulePaint, { passive: true });
+    window.addEventListener("resize", handleResize);
 
     return () => {
       window.cancelAnimationFrame(frame);
-      window.removeEventListener("scroll", schedule);
-      window.removeEventListener("resize", schedule);
+      window.removeEventListener("scroll", schedulePaint);
+      window.removeEventListener("resize", handleResize);
     };
   }, [sections]);
 
