@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { TECHNOLOGY_ICON_NAMES } from "@/lib/icons";
+
 const MAX_LABEL_LENGTH = 48;
 const MAX_HEADLINE_LENGTH = 140;
 const MAX_PARAGRAPH_LENGTH = 700;
@@ -60,6 +62,23 @@ const internalPdfPath = z
     "La ruta no puede contener segmentos '..'",
   );
 
+const internalImagePath = z
+  .string()
+  .trim()
+  .regex(
+    /^\/[A-Za-z0-9][A-Za-z0-9._~\-/]*\.(avif|jpeg|jpg|png|webp)$/,
+    "Usá una ruta interna del sitio que empiece con una sola barra y termine en una imagen",
+  )
+  .refine(
+    (path) => !path.split("/").includes(".."),
+    "La ruta no puede contener segmentos '..'",
+  );
+
+export const projectImageSchema = z.object({
+  src: internalImagePath,
+  alt: headline,
+});
+
 export const resumeSchema = z.object({
   label,
   language: z.enum(["es", "en"]),
@@ -94,6 +113,11 @@ export const uiSchema = z.object({
     sourceLabel: label,
     sourceUrl: z.httpUrl(),
   }),
+  projects: z.object({
+    empty: label,
+    live: label,
+    repository: label,
+  }),
   theme: z.object({
     groupLabel: label,
     options: z.object({
@@ -111,10 +135,21 @@ export const stackLayerIdSchema = z.enum([
   "tooling",
 ]);
 
+export const stackItemSchema = z.object({
+  name: label,
+  icon: z
+    .string()
+    .refine(
+      (value) => TECHNOLOGY_ICON_NAMES.includes(value),
+      "Ese icono no existe en src/lib/icons.ts",
+    )
+    .optional(),
+});
+
 export const stackLayerSchema = z.object({
   id: stackLayerIdSchema,
   label,
-  items: z.array(label).min(1).max(MAX_ITEMS_PER_LAYER),
+  items: z.array(stackItemSchema).min(1).max(MAX_ITEMS_PER_LAYER),
 });
 
 export const stackSchema = z
@@ -143,6 +178,7 @@ export const projectSchema = z.object({
   year: z.number().int().min(EARLIEST_PROJECT_YEAR).max(LATEST_PROJECT_YEAR),
   highlights: z.array(headline).max(MAX_HIGHLIGHTS_PER_PROJECT),
   technologies: z.array(label).min(1).max(MAX_TECHNOLOGIES_PER_PROJECT),
+  image: projectImageSchema.optional(),
   repositoryUrl: z.httpUrl().optional(),
   liveUrl: z.httpUrl().optional(),
 });
@@ -161,6 +197,8 @@ export type Resume = z.infer<typeof resumeSchema>;
 export type Site = z.infer<typeof siteSchema>;
 export type Ui = z.infer<typeof uiSchema>;
 export type StackLayerId = z.infer<typeof stackLayerIdSchema>;
+export type StackItem = z.infer<typeof stackItemSchema>;
 export type StackLayer = z.infer<typeof stackLayerSchema>;
 export type EducationEntry = z.infer<typeof educationEntrySchema>;
+export type ProjectImage = z.infer<typeof projectImageSchema>;
 export type Project = z.infer<typeof projectSchema>;
