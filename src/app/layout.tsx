@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import { Archivo, Instrument_Sans, JetBrains_Mono } from "next/font/google";
 
+import { SiteHeader } from "@/components/layout/SiteHeader";
 import { site } from "@/content/site";
 import { env } from "@/lib/env";
-import { DEFAULT_THEME_PREFERENCE, themeInitScript } from "@/lib/theme";
+import { DEFAULT_THEME_PREFERENCE } from "@/lib/theme";
+import { themeInitScript } from "@/lib/theme-script";
 import "./globals.css";
 
 const archivo = Archivo({
@@ -48,6 +50,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
       <body className="flex min-h-full flex-col bg-ink text-fore">
+        <SiteHeader />
         {children}
       </body>
     </html>
