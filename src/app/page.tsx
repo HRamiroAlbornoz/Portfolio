@@ -1,8 +1,10 @@
+import { TraceRail } from "@/components/layout/TraceRail";
 import { education } from "@/content/education";
 import { projects } from "@/content/projects";
 import { sections } from "@/content/sections";
 import { site } from "@/content/site";
 import { stack } from "@/content/stack";
+import { ui } from "@/content/ui";
 import type { SectionId } from "@/lib/schemas";
 
 function labelFor(id: SectionId): string {
@@ -11,7 +13,10 @@ function labelFor(id: SectionId): string {
 
 export default function HomePage() {
   return (
-    <main id="main-content" className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-16 px-6 py-24">
+    <>
+      <TraceRail label={ui.navigation.railLabel} sections={sections} />
+
+      <main id="main-content" className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-16 px-6 py-24">
       <header className="flex flex-col gap-6">
         <p className="font-mono text-eyebrow uppercase text-trace">
           {site.availability}
@@ -194,5 +199,6 @@ export default function HomePage() {
         </ul>
       </section>
     </main>
+    </>
   );
 }

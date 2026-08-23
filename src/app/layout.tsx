@@ -3,10 +3,7 @@ import { Archivo, Instrument_Sans, JetBrains_Mono } from "next/font/google";
 
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
-import { TraceRail } from "@/components/layout/TraceRail";
-import { sections } from "@/content/sections";
 import { site } from "@/content/site";
-import { ui } from "@/content/ui";
 import { env } from "@/lib/env";
 import { DEFAULT_THEME_PREFERENCE } from "@/lib/theme";
 import { themeInitScript } from "@/lib/theme-script";
@@ -55,7 +52,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       </head>
       <body className="flex min-h-full flex-col bg-ink text-fore">
         <SiteHeader />
-        <TraceRail label={ui.navigation.railLabel} sections={sections} />
         {children}
         <SiteFooter />
       </body>
