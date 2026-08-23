@@ -11,7 +11,7 @@ function labelFor(id: SectionId): string {
 
 export default function HomePage() {
   return (
-    <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-16 px-6 py-24">
+    <main id="main-content" className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-16 px-6 py-24">
       <header className="flex flex-col gap-6">
         <p className="font-mono text-eyebrow uppercase text-trace">
           {site.availability}
