@@ -216,7 +216,7 @@ y el proyecto usa veinte. Aunque los empaquetadores eliminan lo no usado, un imp
 hecho basta para arrastrar el resto — ya pasó con Zod, y costó 59 KB. Copiar los veinte
 elimina la posibilidad.
 
-**Por qué monocromos:** cada logo trae su color de marca. Veinticinco colores ajenos
+**Por qué monocromos:** cada logo trae su color de marca. Veinte colores ajenos
 dentro de una paleta de siete medidos rompen la coherencia visual. Los iconos usan
 `fill-current`, así que heredan el color del texto y se integran en lugar de competir.
 
