@@ -7,7 +7,10 @@ type TechnologyIconProps = {
 };
 
 export function TechnologyIcon({ name }: TechnologyIconProps) {
-  const path = name === undefined ? undefined : TECHNOLOGY_ICONS[name];
+  const path =
+    name !== undefined && Object.hasOwn(TECHNOLOGY_ICONS, name)
+      ? TECHNOLOGY_ICONS[name]
+      : undefined;
 
   if (path === undefined) {
     return (
