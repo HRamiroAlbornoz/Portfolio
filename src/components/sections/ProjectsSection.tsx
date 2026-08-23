@@ -49,7 +49,7 @@ export function ProjectsSection({
                   alt={project.image.alt}
                   className="object-cover"
                   fill
-                  sizes="(min-width: 48rem) 42rem, 100vw"
+                  sizes="(min-width: 48rem) 45rem, calc(100vw - 3rem)"
                   src={project.image.src}
                 />
               </div>
