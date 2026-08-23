@@ -205,6 +205,38 @@ una barra fija se comería el ancho de lectura.
 
 ---
 
+## Los iconos de tecnologías
+
+Los trazados vienen de [Simple Icons](https://simpleicons.org), que se publica bajo CC0
+(dominio público). Están copiados en [`src/lib/icons.ts`](../src/lib/icons.ts), no
+instalados como dependencia.
+
+**Por qué copiarlos y no instalar el paquete:** la colección tiene más de tres mil iconos
+y el proyecto usa veinte. Aunque los empaquetadores eliminan lo no usado, un import mal
+hecho basta para arrastrar el resto — ya pasó con Zod, y costó 59 KB. Copiar los veinte
+elimina la posibilidad.
+
+**Por qué monocromos:** cada logo trae su color de marca. Veinticinco colores ajenos
+dentro de una paleta de siete medidos rompen la coherencia visual. Los iconos usan
+`fill-current`, así que heredan el color del texto y se integran en lugar de competir.
+
+**Por qué algunos no tienen logo:** cuatro de los veinticuatro elementos del stack son
+conceptos, no productos — `APIs REST`, `SQL`, `Supertest` y `Git Flow`. Simple Icons solo
+cataloga marcas, así que no existen y no deberían existir. Llevan un círculo hueco en
+gris, que mantiene el ritmo visual **y dice algo verdadero**: distingue una herramienta de
+un concepto.
+
+El campo `icon` del esquema es opcional y se valida contra las claves reales de
+`icons.ts`: un nombre inexistente rompe el build.
+
+Costo medido: el HTML de la página pesa **29.4 KB comprimido** con los veinte trazados
+incluidos, y el JavaScript de cliente no cambió, porque todo se renderiza en el servidor.
+Los trazados aparecen dos veces en el HTML —una en el marcado y otra en los datos que
+Next.js serializa para hidratar— lo cual es normal del App Router. Si en una auditoría de
+rendimiento hiciera falta recortar, ahí hay margen con un sprite SVG.
+
+---
+
 ## Datos personales
 
 ### Qué se publica a propósito
