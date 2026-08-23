@@ -86,6 +86,14 @@ export const siteSchema = z.object({
 });
 
 export const uiSchema = z.object({
+  navigation: z.object({
+    railLabel: label,
+  }),
+  footer: z.object({
+    note: headline,
+    sourceLabel: label,
+    sourceUrl: z.httpUrl(),
+  }),
   theme: z.object({
     groupLabel: label,
     options: z.object({
