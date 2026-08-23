@@ -6,7 +6,7 @@ export function SiteFooter() {
     <footer className="border-t border-line">
       <div className="mx-auto flex w-full max-w-3xl flex-wrap items-center gap-x-6 gap-y-2 px-6 py-10 font-mono text-eyebrow text-muted sm:whitespace-nowrap">
         <p>
-          © {new Date().getFullYear()} {site.name}
+          © {site.name}
         </p>
 
         <p>{ui.footer.note}</p>
