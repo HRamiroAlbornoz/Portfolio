@@ -16,7 +16,10 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-10 border-b border-line bg-ink/85 backdrop-blur">
       <div className="mx-auto flex h-[var(--header-height)] w-full max-w-3xl items-center justify-between px-6">
-        <Link className="font-mono text-eyebrow uppercase text-fore" href="/">
+        <Link
+          className="inline-flex min-h-11 items-center font-mono text-eyebrow uppercase text-fore"
+          href="/"
+        >
           {getInitials(site.name)}
         </Link>
 

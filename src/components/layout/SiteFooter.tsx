@@ -12,7 +12,7 @@ export function SiteFooter() {
         <p>{ui.footer.note}</p>
 
         <a
-          className="text-trace underline underline-offset-4"
+          className="inline-flex min-h-11 items-center text-trace underline underline-offset-4"
           href={ui.footer.sourceUrl}
           target="_blank"
           rel="noreferrer"
