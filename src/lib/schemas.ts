@@ -85,6 +85,17 @@ export const siteSchema = z.object({
     ),
 });
 
+export const uiSchema = z.object({
+  theme: z.object({
+    groupLabel: label,
+    options: z.object({
+      system: label,
+      light: label,
+      dark: label,
+    }),
+  }),
+});
+
 export const stackLayerIdSchema = z.enum([
   "interface",
   "logic",
@@ -140,6 +151,7 @@ export type Section = z.infer<typeof sectionSchema>;
 export type SocialLink = z.infer<typeof socialLinkSchema>;
 export type Resume = z.infer<typeof resumeSchema>;
 export type Site = z.infer<typeof siteSchema>;
+export type Ui = z.infer<typeof uiSchema>;
 export type StackLayerId = z.infer<typeof stackLayerIdSchema>;
 export type StackLayer = z.infer<typeof stackLayerSchema>;
 export type EducationEntry = z.infer<typeof educationEntrySchema>;
