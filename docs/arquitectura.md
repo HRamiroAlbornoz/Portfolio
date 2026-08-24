@@ -316,6 +316,85 @@ están escritos dos veces.
 
 ---
 
+## Indexación
+
+Cuatro decisiones que parecen detalles y no lo son. Las tres primeras salieron de la
+revisión del PR #5; la cuarta apareció al verificar la corrección.
+
+### La URL canónica vive en la página, no en el layout
+
+Una canónica declara *"esta es la dirección buena de esta página"*. Es una propiedad de
+cada página, no del marco que las envuelve.
+
+Estaba en `layout.tsx`, y el layout envuelve **todas** las rutas. La consecuencia: cada
+URL inexistente se servía con `noindex` y, al mismo tiempo, declarando que su versión
+canónica era la portada. Son dos señales que se contradicen, y Google puede resolver la
+contradicción juntando el par y sacando del índice la portada, que es la única página
+indexable del sitio.
+
+Ahora `alternates.canonical` se declara en [`page.tsx`](../src/app/page.tsx). La 404 no
+declara ninguna, que es lo correcto para una página que no se indexa.
+
+**Cuidado al mover metadatos entre segmentos:** Next.js los fusiona de forma
+**superficial**. Un objeto anidado definido en la página —`openGraph`, `twitter`,
+`robots`— **reemplaza entero** al del layout, no se combina campo por campo. Por eso
+`openGraph` se dejó completo en el layout: moverle solo el campo `url` a la página habría
+borrado el tipo, el idioma y el nombre del sitio.
+
+`openGraph.url` sigue apuntando a la portada en todas las rutas. Es deliberado: no influye
+en la indexación —Google usa la canónica, no esta etiqueta— y hace que compartir un enlace
+roto muestre la tarjeta de la portada en lugar de una tarjeta rota.
+
+### No hay etiqueta `robots` en la portada
+
+`index, follow` es el comportamiento por defecto de cualquier página. Declararlo no agrega
+información.
+
+Peor: declararlo en el layout provocaba que la 404 emitiera **dos** etiquetas `robots`,
+porque Next.js ya emite `noindex` por su cuenta en las rutas no encontradas. Al sacar la
+declaración del layout y también la de `not-found.tsx`, la portada no lleva ninguna
+—y es indexable por defecto— y la 404 lleva exactamente una, la del framework.
+
+### El mapa del sitio no declara fechas
+
+`lastModified` guardaba `new Date()`, que es **el momento del build**, no la fecha en que
+cambió el contenido. Un despliegue que solo toca documentación habría declarado que la
+portada cambió. Google descarta los `lastmod` que detecta poco confiables, así que una
+fecha inventada no solo no ayuda: resta credibilidad al resto del archivo.
+
+`changeFrequency` y `priority` se quitaron por la misma razón. Google los ignora, y
+`priority` es una escala **relativa entre las URLs del propio sitio**: con una sola URL no
+puede expresar nada.
+
+El mapa quedó con lo único verificable: la dirección.
+
+### El destino del enlace de salto recibe el foco
+
+Un enlace a `#main-content` mueve la vista, pero **no necesariamente el foco del teclado**.
+En navegadores basados en WebKit, saltar a un elemento que no puede recibir foco deja el
+foco donde estaba: la página baja, y el siguiente `Tab` vuelve a la cabecera. El enlace no
+saltea nada, justo para la persona a la que sirve.
+
+Por eso los dos `<main>` llevan `tabIndex={-1}`: los vuelve enfocables por programa sin
+meterlos en el orden de tabulación.
+
+Eso trajo un efecto secundario. Al poder recibir foco, la regla global `:focus-visible`
+les dibujaba un contorno alrededor de **todo** el contenido. Como `<main>` es más alto que
+la pantalla, no se veía un recuadro sino dos líneas verticales sueltas a los costados: no
+comunicaba nada y parecía un error de maquetado.
+
+Los dos `<main>` llevan entonces `focus-visible:outline-none`. **No debilita la
+accesibilidad:** el criterio de foco visible de WCAG aplica a los componentes operables
+por teclado, y un contenedor con `tabIndex={-1}` no está en el orden de tabulación. La
+retroalimentación real la dan el desplazamiento, el anuncio del punto de referencia
+principal en el lector de pantalla, y el anillo de foco del primer enlace al pulsar `Tab`.
+
+Verificado en navegador: el foco queda en `main#main-content`, el `Tab` siguiente cae en
+el primer enlace **dentro** del contenido, y el anillo de foco del resto de los elementos
+sigue intacto.
+
+---
+
 ## Datos personales
 
 ### Qué se publica a propósito
