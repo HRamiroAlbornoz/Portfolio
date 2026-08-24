@@ -107,6 +107,13 @@ export const siteSchema = z.object({
 export const uiSchema = z.object({
   navigation: z.object({
     railLabel: label,
+    skipLabel: label,
+  }),
+  notFound: z.object({
+    code: label,
+    title: headline,
+    description: paragraph,
+    homeLabel: label,
   }),
   footer: z.object({
     note: headline,
