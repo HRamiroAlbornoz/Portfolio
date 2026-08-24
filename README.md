@@ -67,9 +67,14 @@ produce ningún error visible, así que conviene que reviente temprano.
 | `npm run build` | Build de producción. Acá corren las validaciones de Zod y se genera la imagen de previsualización |
 | `npm start` | Sirve el build de producción en local (requiere `npm run build` antes) |
 | `npm run lint` | ESLint |
-| `npm run typecheck` | TypeScript sin emitir archivos |
+| `npm run typecheck` | Genera los tipos de rutas de Next.js y después chequea tipos sin emitir archivos |
 
-Los tres que tienen que pasar antes de un merge son `lint`, `typecheck` y `build`.
+Los tres que tienen que pasar antes de un merge son `lint`, `typecheck` y `build`, y no
+hace falta acordarse: los corre el CI en cada Pull Request.
+
+`typecheck` genera los tipos antes de chequear porque Next.js crea definiciones a partir
+de tus rutas —como `LayoutProps`— que no existen en un repositorio recién clonado. El
+detalle está en [`docs/arquitectura.md`](./docs/arquitectura.md#integración-continua).
 
 ---
 
@@ -162,6 +167,9 @@ Lo único que hay que configurar en el panel es `NEXT_PUBLIC_SITE_URL` con la UR
 
 - **Ramas:** `feature/*` para funcionalidades, `chore/*` para infraestructura. `main` está
   protegida: no se pushea directo, todo entra por Pull Request.
+- **CI:** cada Pull Request corre lint, chequeo de tipos y build
+  ([`.github/workflows/ci.yml`](./.github/workflows/ci.yml)). Si el check `verify` está en
+  rojo, no se mergea.
 - **Commits:** en inglés, en imperativo (`Add trace rail scroll progress`).
 - **Sin comentarios en el código.** Si algo necesita explicación, va a `docs/`.
 - **Sin `any`.** Todo dato externo se valida con Zod.

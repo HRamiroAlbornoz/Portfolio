@@ -432,6 +432,84 @@ comprometido aunque lo borres.
 
 ---
 
+## Integración continua
+
+[`ci.yml`](../.github/workflows/ci.yml) corre `lint`, `typecheck` y `build` en cada push a
+`main` y en cada Pull Request dirigido a `main`. Los pushes a una rama de trabajo no lo
+disparan por sí solos: llegan al CI a través del PR, que es lo que evita gastar minutos en
+cada commit intermedio.
+
+### El token del workflow es de solo lectura
+
+`permissions: contents: read`. Por defecto, GitHub le presta al workflow un token con
+permisos de escritura sobre el repositorio. Este solo necesita leer código. Si algún día
+un paquete comprometido lograra ejecutar algo durante `npm ci`, no podría escribir.
+
+### `npm ci`, no `npm install`
+
+`install` puede actualizar `package-lock.json` si encuentra versiones más nuevas. `ci`
+instala exactamente lo que dice el lock y falla si no coincide con `package.json`. En CI
+se busca reproducibilidad, no novedades.
+
+### La versión de Node iguala la de producción
+
+`node-version: 24`, que es lo que corre Vercel. Si el CI probara con otra versión, podría
+aprobar código que después falla al desplegar.
+
+### La URL del sitio en CI es falsa a propósito
+
+El build necesita `NEXT_PUBLIC_SITE_URL`: sin ella, el esquema de
+[`env.ts`](../src/lib/env.ts) lanza el error y el build se corta. Verificado corriendo el
+build con la variable vacía.
+
+El workflow define `https://ci.invalid`. `.invalid` es un dominio reservado que nunca puede
+existir de verdad. La alternativa —poner la URL real— la duplicaría en dos lugares, el
+workflow y el panel de Vercel, que tarde o temprano se desincronizan. Un valor
+evidentemente falso avisa que eso no es producción.
+
+No se pierde nada: la URL no influye en si el código compila, y la URL real la valida el
+build de Vercel con este mismo esquema. Si se carga mal ahí, el despliegue falla y no
+llega a publicarse. Tampoco es un secreto: `NEXT_PUBLIC_*` viaja al navegador por
+definición.
+
+### Por qué `typecheck` genera tipos antes de chequear
+
+La primera corrida del CI falló así:
+
+```
+src/app/layout.tsx(60,50): error TS2304: Cannot find name 'LayoutProps'.
+```
+
+`LayoutProps` no está escrito en el proyecto: **lo genera Next.js** dentro de `.next/types/`
+a partir de las rutas que encuentra, para que el tipo de las props conozca las rutas que
+existen de verdad.
+
+En una máquina de trabajo el tipo siempre está, porque `.next/` quedó de builds
+anteriores. En CI, `typecheck` corre sobre un repositorio recién clonado donde `.next/` no
+existe. El error estuvo latente durante cinco fases y ninguna revisión local podía
+revelarlo.
+
+La corrección va en el script, no en el workflow:
+
+```json
+"typecheck": "next typegen && tsc --noEmit"
+```
+
+Arreglarlo solo en el workflow dejaría `npm run typecheck` roto para cualquiera que clone
+el repositorio limpio. Es además el patrón que recomienda la documentación de Next.js para
+CI, porque `next typegen` genera las definiciones de rutas sin hacer un build completo.
+
+`next-env.d.ts`, que ese comando también genera, está en `.gitignore`: el chequeo de tipos
+no deja el árbol sucio.
+
+### El orden para exigir el check en `main`
+
+GitHub solo permite marcar como obligatorio un check que **ya reportó al menos una vez**.
+Por eso el workflow se mergea primero y la protección de rama se configura después. Al
+revés, el check no aparece en la lista.
+
+---
+
 ## Dependencias
 
 El proyecto agrega dos paquetes al andamiaje de `create-next-app`:
