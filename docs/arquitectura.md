@@ -237,6 +237,85 @@ rendimiento hiciera falta recortar, ahí hay margen con un sprite SVG.
 
 ---
 
+## La imagen de previsualización
+
+[`opengraph-image.tsx`](../src/app/opengraph-image.tsx) genera el PNG de 1200x630 que
+LinkedIn, WhatsApp o Slack muestran cuando alguien comparte el enlace. Next.js lo
+prerenderiza durante el build: en producción es un archivo estático, no se dibuja en
+cada visita.
+
+Se dibuja con `ImageResponse`, que por dentro usa Satori. Satori **no es un navegador**:
+no ejecuta CSS, no lee `globals.css` y no conoce las fuentes del sitio. Recibe un árbol
+de JSX con estilos en línea y devuelve una imagen. De ahí salen las tres restricciones
+que explican por qué este archivo se ve distinto al resto del proyecto.
+
+### Solo flexbox, y `display: flex` en todo
+
+Satori soporta flexbox y posicionamiento absoluto. **No soporta grid.** Además, todo
+elemento con hijos necesita su `display` declarado de forma explícita: si falta, el
+build falla con un error poco descriptivo.
+
+La traza usa la misma técnica estructural que la sección Stack: el riel es una columna
+flex con un nodo arriba, un nodo abajo y una línea con `flexGrow: 1` en el medio. La
+línea mide lo que sobra, así que los nodos quedan alineados con el borde superior e
+inferior del contenido sin que haya un solo margen calculado a mano. Si el texto cambia
+de largo, la traza se reajusta sola.
+
+### La paleta está duplicada, y es a propósito
+
+Los cinco colores viven como constantes al principio del archivo, repitiendo valores que
+ya están en [`globals.css`](../src/app/globals.css). No es un descuido: Satori no puede
+leer variables CSS, así que no hay forma de tener una sola fuente de verdad.
+
+**Es el único lugar del proyecto donde la paleta oscura está duplicada.** Si se cambia un
+color del tema oscuro, hay que cambiarlo también acá. La alternativa —declarar la paleta
+en TypeScript y generar el CSS desde ahí— resolvería la duplicación a cambio de meter un
+paso de build entre el diseño y el navegador, que es un precio alto por cinco valores que
+casi nunca cambian.
+
+La imagen usa siempre el tema oscuro. Una previsualización no tiene forma de conocer la
+preferencia de quien la mira, y el oscuro es la identidad del sitio.
+
+### Las fuentes viven en el repositorio
+
+`assets/fonts/` guarda las tres fuentes en `.woff`, con su licencia. Hay tres decisiones
+encadenadas ahí:
+
+**Se incrustan** porque Satori no hereda nada del sitio: hay que pasarle el binario. Sin
+esto la imagen saldría con la tipografía por defecto y no se parecería al portfolio.
+
+**Se guardan en el repositorio** en lugar de descargarse durante el build. Descargarlas
+ahorraría 67 KB de repositorio a cambio de que el build falle si Google Fonts no responde
+en ese momento. Es el mismo criterio que con los iconos: nada externo en el camino
+crítico del build.
+
+**Formato `.woff`** porque es el más liviano de los tres que Satori acepta: `ttf`, `otf`
+y `woff`. `woff2` **no** está soportado, y es el formato que sirven casi todos los CDN
+por defecto — es el error fácil de cometer acá.
+
+Las fuentes se leen una sola vez al cargar el módulo, no dentro de la función. Es lo que
+recomienda la documentación de Next.js: el archivo no depende de la petición, así que
+leerlo en cada invocación sería trabajo repetido.
+
+Como la ruta se prerenderiza, `assets/` solo hace falta **durante el build**. No es una
+dependencia de tiempo de ejecución y no necesita entrar en el paquete del servidor.
+
+### Presupuesto
+
+`ImageResponse` limita a **500 KB** la suma de JSX, CSS, fuentes e imágenes. Acá se usan
+67 KB, todo en fuentes. El PNG resultante pesa 59 KB.
+
+### Las etiquetas las cablea Next.js
+
+No hace falta un `twitter-image.tsx` aparte ni declarar `openGraph.images` en el
+`layout.tsx`. Por la sola presencia del archivo, Next.js emite `og:image` y
+`twitter:image` con su tipo, ancho, alto y texto alternativo. El `alt` sale del `export
+const alt` del propio archivo, y el contenido de la imagen sale de
+[`site.ts`](../src/content/site.ts): el nombre, el rol, la frase y la disponibilidad no
+están escritos dos veces.
+
+---
+
 ## Datos personales
 
 ### Qué se publica a propósito

@@ -52,7 +52,7 @@ datos, sin tocar un solo componente.
 Siete tokens, dos temas.
 
 Las dos paletas se declaran completas en `:root`, con los prefijos `--light-*` y
-`--dark-*`. Cada valor hexadecimal aparece **una sola vez en todo el proyecto**. Los
+`--dark-*`. Dentro del CSS, cada valor hexadecimal aparece **una sola vez**. Los
 siete tokens que usa el sitio (`--ink`, `--fore`, …) no contienen valores: apuntan a una
 de las dos paletas según el tema activo. Eso importa porque hay tres bloques que hacen
 ese apuntado —`:root`, `.dark` y el respaldo por consulta de medios— y si cada uno
@@ -73,6 +73,13 @@ repitiera los valores, tarde o temprano se desincronizarían.
 El acento cambia de familia entre temas —menta clara sobre fondo oscuro, verde-azulado
 profundo sobre fondo claro— porque un mismo valor no puede tener contraste suficiente
 contra dos fondos opuestos.
+
+> **Hay una excepción, y está fuera del CSS.** La imagen de previsualización
+> ([`opengraph-image.tsx`](../src/app/opengraph-image.tsx)) repite cinco valores de la
+> paleta oscura como constantes de TypeScript, porque la dibuja Satori, que no ejecuta
+> CSS y no puede leer variables. **Si cambiás un color del tema oscuro, cambialo también
+> ahí.** El razonamiento completo está en
+> [`arquitectura.md`](./arquitectura.md#la-imagen-de-previsualización).
 
 ### Contrastes medidos
 
