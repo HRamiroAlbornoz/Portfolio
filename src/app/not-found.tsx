@@ -5,14 +5,14 @@ import { ui } from "@/content/ui";
 
 export const metadata: Metadata = {
   title: ui.notFound.title,
-  robots: { index: false, follow: true },
 };
 
 export default function NotFound() {
   return (
     <main
-      className="mx-auto flex w-full max-w-3xl flex-1 flex-col justify-center gap-6 px-6 py-24"
+      className="mx-auto flex w-full max-w-3xl flex-1 flex-col justify-center gap-6 px-6 py-24 focus-visible:outline-none"
       id="main-content"
+      tabIndex={-1}
     >
       <p className="font-mono text-eyebrow uppercase text-pending">
         {ui.notFound.code}

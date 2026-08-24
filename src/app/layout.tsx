@@ -42,7 +42,6 @@ export const metadata: Metadata = {
     template: `%s — ${site.name}`,
   },
   description: site.tagline,
-  alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     locale: "es_AR",
@@ -56,7 +55,6 @@ export const metadata: Metadata = {
     title: `${site.name} — ${site.role}`,
     description: site.tagline,
   },
-  robots: { index: true, follow: true },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
