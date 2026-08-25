@@ -522,6 +522,14 @@ cualquier interpolación sin serializar, y `react/no-danger` prohíbe
 error existe y el navegador lo frena. Esas capas **previenen**: el código con el error no
 llega a compilar.
 
+Con una salvedad que conviene no perder de vista. Las dos garantías no son equivalentes:
+`react/no-danger` es una regla de lint que un `eslint-disable` desactiva en silencio, y la
+marca `ScriptLiteral` protege **solo** esa plantilla. Un segundo `dangerouslySetInnerHTML`
+agregado bajo una excepción no llevaría ninguna guarda, y en ese escenario la CSP sería la
+única capa en pie —y con `'unsafe-inline'` no lo estaría—. La conclusión no es cambiar la
+política, sino que la regla de lint y su excepción de un solo archivo se revisan con
+cuidado cada vez que alguien las toque.
+
 Las cabeceras cubren lo que esas capas no alcanzan.
 
 ### Por qué la CSP permite scripts en línea
