@@ -151,6 +151,9 @@ Objetivos verificados, no aspiracionales:
 - `prefers-reduced-motion` apaga todas las animaciones.
 - Tema claro y oscuro automático según el sistema, más un selector manual de tres estados,
   sin parpadeo al recargar.
+- Cuatro cabeceras de seguridad en todas las rutas, incluida una Política de Seguridad de
+  Contenido. Qué protegen y qué no, en
+  [`docs/arquitectura.md`](./docs/arquitectura.md#cabeceras-de-seguridad).
 
 ---
 
