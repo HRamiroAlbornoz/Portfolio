@@ -18,7 +18,7 @@ export function SiteHeader() {
       <div className="mx-auto flex h-[var(--header-height)] w-full max-w-3xl items-center justify-between px-6">
         <Link
           className="inline-flex min-h-11 items-center font-mono text-eyebrow uppercase text-fore"
-          href="/"
+          href="/#main-content"
         >
           {getInitials(site.name)}
         </Link>
