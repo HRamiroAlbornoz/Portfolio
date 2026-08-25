@@ -510,6 +510,133 @@ revés, el check no aparece en la lista.
 
 ---
 
+## Cabeceras de seguridad
+
+[`next.config.ts`](../next.config.ts) envía cuatro cabeceras en todas las rutas.
+
+Ninguna de ellas es la protección del sitio contra XSS. **Esa vive en el código**, y es más
+fuerte: no hay ningún punto donde entren datos de la petición, React escapa todo el texto,
+Zod valida el contenido, el tipo marcado `ScriptLiteral` convierte en error de compilación
+cualquier interpolación sin serializar, y `react/no-danger` prohíbe
+`dangerouslySetInnerHTML` fuera de un único archivo autorizado. Una cabecera **mitiga**: el
+error existe y el navegador lo frena. Esas capas **previenen**: el código con el error no
+llega a compilar.
+
+Con una salvedad que conviene no perder de vista. Las dos garantías no son equivalentes:
+`react/no-danger` es una regla de lint que un `eslint-disable` desactiva en silencio, y la
+marca `ScriptLiteral` protege **solo** esa plantilla. Un segundo `dangerouslySetInnerHTML`
+agregado bajo una excepción no llevaría ninguna guarda, y en ese escenario la CSP sería la
+única capa en pie —y con `'unsafe-inline'` no lo estaría—. La conclusión no es cambiar la
+política, sino que la regla de lint y su excepción de un solo archivo se revisan con
+cuidado cada vez que alguien las toque.
+
+Las cabeceras cubren lo que esas capas no alcanzan.
+
+### Por qué la CSP permite scripts en línea
+
+`script-src` incluye `'unsafe-inline'`, que es exactamente la directiva que una CSP estricta
+evita. No es una concesión por comodidad: las dos alternativas se evaluaron y ninguna sirve
+acá.
+
+**Nonce (un token distinto por visita).** Es lo que recomienda Next.js, y su propia
+documentación advierte el costo: *"todas las páginas deben renderizarse dinámicamente; la
+optimización estática y la ISR quedan deshabilitadas; las páginas no pueden ser cacheadas
+por CDN"*. El motivo es estructural: el token se genera al recibir la petición, y una página
+estática se construyó mucho antes de que esa petición existiera. Adoptarlo significaría
+perder el prerenderizado, medido en producción en 49 ms de TTFB.
+
+**Huella criptográfica del script.** Autoriza un script exacto y ningún otro, y es
+compatible con el prerenderizado. Se descartó al contar los scripts en línea que la página
+emite realmente. Este es el build del commit que introdujo estas cabeceras:
+
+```
+ 1.    633 bytes | (function () { var allowed = ["system","light","dark"]  <- el del tema
+ 2.     43 bytes | (self.__next_f=self.__next_f||[]).push([0])             <- de Next.js
+ 3.  18809 bytes | self.__next_f.push([1,"1:\"$Sreact.fragment\"...        <- de Next.js
+ 4.  17904 bytes | self.__next_f.push([1,"M23.5594 14.7228a.5269...        <- de Next.js
+ 5.  15099 bytes | self.__next_f.push([1,"2f:T49c,M1.125 0C.502 0...       <- de Next.js
+ 6.   2661 bytes | self.__next_f.push([1,"32:I[27201,...                   <- de Next.js
+```
+
+Son seis, no uno. Cinco los genera Next.js y contienen el contenido serializado de la
+página —incluidos los trazados de los iconos, visibles en los ítems 4 y 5—, así que su
+huella cambia **cada vez que se edita un texto o se agrega un proyecto**.
+
+**Esa lista de arriba es una foto, y no se reproduce.** Una medición anterior sobre el
+mismo código había dado **cuatro** scripts, con otros tamaños: Next.js reparte ese
+contenido en más o menos trozos según el build. O sea que las huellas no solo cambiarían de
+valor, sino que ni siquiera se puede saber de antemano **cuántas** hacen falta.
+
+Mantenerlas a mano es inviable, y Next.js no ofrece nada que las calcule y las inyecte en la
+cabecera. El fallo además sería silencioso: el script del tema dejaría de ejecutarse y el
+síntoma sería el parpadeo al cargar, sin ningún error en consola.
+
+`'unsafe-inline'` no mira el contenido de los scripts, así que editar contenido nunca rompe
+nada.
+
+### Qué protege entonces
+
+| Directiva | Qué bloquea |
+|---|---|
+| `frame-ancestors 'none'` | Que el sitio se cargue dentro de un iframe ajeno (*clickjacking*) |
+| `script-src 'self'` | Scripts servidos desde cualquier dominio que no sea el propio |
+| `object-src 'none'` | Plugins embebidos |
+| `base-uri 'self'` | Que se reescriba la base de todas las URLs relativas |
+| `form-action 'self'` | Que un formulario inyectado envíe datos afuera |
+| `upgrade-insecure-requests` | Peticiones sin cifrar |
+
+Lo que no frena es el XSS en línea, que es justo el ataque para el que este sitio no tiene
+puerta de entrada.
+
+Las otras tres cabeceras no tienen contrapartida: `X-Content-Type-Options: nosniff` impide
+que el navegador adivine el tipo de un archivo y lo trate como código;
+`Referrer-Policy: strict-origin-when-cross-origin` evita filtrar la ruta completa al salir
+del sitio; `Permissions-Policy` desactiva cámara, micrófono, geolocalización y la API de
+temas de navegación, que el sitio no usa.
+
+No se agregó `X-Frame-Options` porque `frame-ancestors` cumple la misma función y la
+reemplaza en todos los navegadores actuales.
+
+### La barra de Vercel, solo en las vistas previas
+
+Vercel inyecta su barra de herramientas en los despliegues de vista previa. Necesita cargar
+recursos de `vercel.live`, `vercel.com` y `assets.vercel.com`, y abrir un websocket contra
+`ws-us3.pusher.com`. Con la política inicial esos orígenes quedaban bloqueados y la barra no
+cargaba.
+
+Esos orígenes se agregan **solo cuando `VERCEL_ENV` vale `preview`**, no en producción. La
+barra no corre en producción, así que autorizar ahí cinco orígenes externos sería aflojar la
+política a cambio de nada.
+
+De paso, la corrección dejó producción **más estricta** que antes: `connect-src 'self'` y
+`frame-src 'none'` ahora son explícitos, cuando antes heredaban de `default-src`.
+
+Las directivas exactas salen de la documentación de Vercel, no de prueba y error. Verificado
+construyendo con `VERCEL_ENV=preview` y leyendo la cabecera resultante en
+`.next/routes-manifest.json`.
+
+### `unsafe-eval` solo en desarrollo
+
+`script-src` suma `'unsafe-eval'` cuando `NODE_ENV` es `development`, porque React lo
+necesita para reconstruir los stacks de error en el navegador. En producción no aparece,
+verificado en las cabeceras servidas por un build de producción.
+
+### Cuándo va a hacer falta tocar esto
+
+El día que se agregue algo externo —analíticas, un video embebido, una fuente de un CDN, un
+iframe—, la CSP lo va a bloquear hasta que ese origen se sume a la directiva
+correspondiente. Es un fallo **visible**: el elemento no aparece y la consola dice qué
+origen se bloqueó y por qué. Eso es la CSP funcionando, no fallando.
+
+### Verificación
+
+Contra un build de producción local: las cuatro cabeceras presentes en todas las rutas,
+cero violaciones en consola, el script del tema ejecutado (el atributo `data-theme-resolved`
+presente), las tres tipografías cargadas, y el tema oscuro persistiendo tras recargar sin
+parpadeo. En desarrollo, cero errores y cero advertencias.
+
+---
+
 ## Dependencias
 
 El proyecto agrega dos paquetes al andamiaje de `create-next-app`:

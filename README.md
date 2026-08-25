@@ -4,7 +4,7 @@ Portfolio personal de un desarrollador Full Stack con foco en backend. Sitio de 
 página, en español, sin dependencias de servidor: todo se prerenderiza durante el build y
 se sirve como archivos estáticos.
 
-**Sitio en producción:** pendiente de conectar a Vercel.
+**Sitio en producción:** <https://hernan-albornoz.vercel.app>
 
 ---
 
@@ -151,6 +151,9 @@ Objetivos verificados, no aspiracionales:
 - `prefers-reduced-motion` apaga todas las animaciones.
 - Tema claro y oscuro automático según el sistema, más un selector manual de tres estados,
   sin parpadeo al recargar.
+- Cuatro cabeceras de seguridad en todas las rutas, incluida una Política de Seguridad de
+  Contenido. Qué protegen y qué no, en
+  [`docs/arquitectura.md`](./docs/arquitectura.md#cabeceras-de-seguridad).
 
 ---
 
