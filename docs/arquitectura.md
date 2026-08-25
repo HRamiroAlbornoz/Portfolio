@@ -637,6 +637,85 @@ parpadeo. En desarrollo, cero errores y cero advertencias.
 
 ---
 
+## El logo de la cabecera
+
+El logo usa un `<a>` común con `href="/#main-content"`. Las tres partes de esa decisión
+salieron de errores concretos, no de preferencias.
+
+### Por qué no apunta a `/`
+
+Apuntaba ahí, y **no hacía nada**. Next.js lo documenta: `<Link>` *mantiene la posición de
+scroll* mientras la página destino siga visible en la ventana. En un sitio de una sola
+página siempre lo está, así que la URL cambiaba a `/` y el lector se quedaba donde estaba.
+
+### Por qué la barra inicial no se puede quitar
+
+La página 404 **también** tiene un `<main id="main-content">`. Con `#main-content` a secas,
+el logo haría scroll dentro de la propia 404 en vez de sacar de ahí, justo en la página que
+más necesita una salida.
+
+Con la barra, el navegador compara la URL completa: desde la portada solo difiere el
+fragmento, así que es un salto instantáneo dentro del documento; desde la 404 difiere la
+ruta, así que navega a la portada y después se desplaza.
+
+### Por qué es un `<a>` y no un `<Link>`
+
+Se probó con `<Link>` y falla en el caso más común de todos: **tocarlo dos veces**.
+
+Una vez que la URL es `/#main-content`, `<Link>` compara destino y actual, las ve iguales y
+decide que no hay navegación que hacer. Medido: desde scroll 2000, `<Link>` deja la página
+en 2000; un `<a>` común la lleva a 1. El navegador, ante un fragmento, vuelve a desplazarse
+coincida o no la URL.
+
+Esto obligó a desactivar `@next/next/no-html-link-for-pages` **solo para este archivo** en
+[`eslint.config.mjs`](../eslint.config.mjs). Es la segunda excepción de lint del proyecto,
+después de `react/no-danger` en `layout.tsx`.
+
+**La regla es un falso positivo acá.** Existe para evitar recargas completas al navegar
+entre páginas: detecta que el `href` empieza con `/` y no mira más allá, sin ver que hay un
+fragmento ni que el destino es la misma página. Desde la portada no hay ninguna recarga.
+
+**El riesgo que se acepta:** si algún día la cabecera suma enlaces internos —un menú, una
+segunda página— ESLint ya no avisará y esos enlaces recargarían el sitio entero en silencio.
+La cabecera hoy tiene dos cosas: el logo y el selector de tema. **Si eso cambia, hay que
+revisar esta excepción.**
+
+Se evaluó la alternativa de un componente de cliente con `scrollTo`. Se descartó: sería el
+tercer componente de cliente, agregaría JavaScript para algo que el navegador hace nativo, y
+—lo decisivo— **dejaría de funcionar antes de la hidratación y con JavaScript deshabilitado**.
+
+La contención de la excepción está verificada: el mismo `<a href="/#main-content">` en otro
+archivo hace fallar el lint con código de salida 1.
+
+---
+
+## Nunca promover una vista previa a producción
+
+Esta es una consecuencia permanente de que la CSP dependa del entorno, y conviene tenerla
+presente antes de tocar el panel de Vercel.
+
+Los orígenes de la barra de Vercel se agregan a la cabecera cuando `VERCEL_ENV` vale
+`preview`. Eso se decide **durante el build**, y queda horneado en el resultado.
+
+La documentación de Vercel es explícita sobre la promoción: *"esta acción **no reconstruye**
+el despliegue"*. Promover una vista previa publica los archivos ya compilados —los de
+`preview`—, así que producción quedaría autorizando `vercel.live`, `vercel.com`,
+`assets.vercel.com` y `wss://ws-us3.pusher.com`.
+
+**El fallo sería invisible:** el sitio se vería y funcionaría igual, con la política de
+seguridad floja y sin ningún error en ningún lado.
+
+Si un merge a `main` no dispara el despliegue —pasó una vez, con el commit ausente por
+completo del panel de Vercel—, la salida correcta **no** es promover la vista previa del PR,
+aunque tenga exactamente el mismo código. Hay que forzar una construcción nueva de `main`
+con variables de producción: en **Settings → Git → Deploy Hooks**, crear un hook apuntando a
+`main` y ejecutarlo.
+
+Después de cualquier despliegue fuera de lo habitual, verificar que la CSP de producción
+**no** contenga esos cuatro orígenes.
+
+---
+
 ## Dependencias
 
 El proyecto agrega dos paquetes al andamiaje de `create-next-app`:

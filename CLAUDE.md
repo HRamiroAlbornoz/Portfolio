@@ -76,6 +76,12 @@ también.
 excepción elimina la protección contra XSS del proyecto: la CSP permite `'unsafe-inline'` y
 no cubriría el hueco.
 
+Hay una **segunda** excepción de lint: `@next/next/no-html-link-for-pages` está desactivada
+para `src/components/layout/SiteHeader.tsx`, donde el logo necesita ser un `<a>` común
+—`<Link>` no vuelve a desplazar cuando la URL ya coincide con el destino—. Si esa cabecera
+suma enlaces internos, hay que revisar la excepción: dejarían de estar vigilados. Son las
+**únicas dos**; agregar una tercera es una decisión de proyecto, no un atajo.
+
 **Solo dos componentes son de cliente:** `TraceRail` y `ThemeToggle`. Mantenerlo así.
 
 ### Metadatos
