@@ -667,25 +667,52 @@ decide que no hay navegación que hacer. Medido: desde scroll 2000, `<Link>` dej
 en 2000; un `<a>` común la lleva a 1. El navegador, ante un fragmento, vuelve a desplazarse
 coincida o no la URL.
 
-Esto obligó a desactivar `@next/next/no-html-link-for-pages` **solo para este archivo** en
+Esto obligó a desactivar `@next/next/no-html-link-for-pages` en
 [`eslint.config.mjs`](../eslint.config.mjs). Es la segunda excepción de lint del proyecto,
 después de `react/no-danger` en `layout.tsx`.
 
-**La regla es un falso positivo acá.** Existe para evitar recargas completas al navegar
-entre páginas: detecta que el `href` empieza con `/` y no mira más allá, sin ver que hay un
-fragmento ni que el destino es la misma página. Desde la portada no hay ninguna recarga.
+### Por qué el ancla vive en su propio archivo
 
-**El riesgo que se acepta:** si algún día la cabecera suma enlaces internos —un menú, una
-segunda página— ESLint ya no avisará y esos enlaces recargarían el sitio entero en silencio.
-La cabecera hoy tiene dos cosas: el logo y el selector de tema. **Si eso cambia, hay que
-revisar esta excepción.**
+`HomeLink` existe **solo** para que la excepción de lint tenga el alcance más chico posible.
+Podría ser cuatro líneas dentro de `SiteHeader`, pero entonces la excepción cubriría toda la
+cabecera: cualquier enlace interno que se agregara ahí en el futuro quedaría sin vigilancia.
 
-Se evaluó la alternativa de un componente de cliente con `scrollTo`. Se descartó: sería el
-tercer componente de cliente, agregaría JavaScript para algo que el navegador hace nativo, y
-—lo decisivo— **dejaría de funcionar antes de la hidratación y con JavaScript deshabilitado**.
+Con el ancla aislada, la excepción cubre un archivo cuyo único contenido **es** esa ancla, y
+`SiteHeader` conserva la regla activa. Verificado: un `<a href="/">` agregado dentro de
+`SiteHeader.tsx` hace fallar el lint con código de salida 1.
 
-La contención de la excepción está verificada: el mismo `<a href="/#main-content">` en otro
-archivo hace fallar el lint con código de salida 1.
+Se descartó la otra forma de acotarlo, un `eslint-disable-next-line` sobre la línea: es un
+comentario en el código, y este proyecto no lleva comentarios.
+
+### El alcance real de la regla
+
+La regla **solo se dispara con `href` que resuelven a una ruta que existe**. Una prueba con
+`<a href="/about">` no fue marcada, porque esa ruta no existe en el sitio. Así que el riesgo
+que se acepta es más angosto de lo que parece: alcanza a enlaces hacia `/`, no a cualquier
+enlace interno.
+
+**La regla es un falso positivo para el caso de la portada.** Existe para evitar recargas
+completas al navegar entre páginas: detecta que el `href` empieza con `/` y no mira más
+allá, sin ver que hay un fragmento ni que el destino es la misma página. Desde la portada no
+hay ninguna recarga.
+
+### Desde el resto de las rutas sí hay navegación completa
+
+Conviene decirlo, porque el argumento anterior no cubre este caso. Desde la 404, el logo
+descarta el documento, vuelve a ejecutar el script del tema y reaplica las tipografías,
+mientras que un `<Link>` haría una transición del lado del cliente.
+
+Medido sobre un build de producción, ese salto desde la 404 cuesta **34 ms en total, con 0
+bytes de red**: los trece recursos salen de la caché del navegador. Contra un CDN habría que
+sumar el tiempo hasta el primer byte, medido en producción en 49 ms. Sigue siendo del orden
+de la décima de segundo, en una página que se visita rara vez y de la que el usuario quiere
+salir. El cuerpo de la 404 conserva además su propio `<Link href="/">`, que sí hace la
+transición rápida.
+
+Se aceptó ese costo en lugar de la alternativa: un componente de cliente con `scrollTo`
+sería el tercer componente de cliente, agregaría JavaScript para algo que el navegador hace
+nativo, y —lo decisivo— **dejaría de funcionar antes de la hidratación y con JavaScript
+deshabilitado**.
 
 ---
 

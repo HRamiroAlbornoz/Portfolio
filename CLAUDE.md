@@ -77,10 +77,13 @@ excepción elimina la protección contra XSS del proyecto: la CSP permite `'unsa
 no cubriría el hueco.
 
 Hay una **segunda** excepción de lint: `@next/next/no-html-link-for-pages` está desactivada
-para `src/components/layout/SiteHeader.tsx`, donde el logo necesita ser un `<a>` común
-—`<Link>` no vuelve a desplazar cuando la URL ya coincide con el destino—. Si esa cabecera
-suma enlaces internos, hay que revisar la excepción: dejarían de estar vigilados. Son las
-**únicas dos**; agregar una tercera es una decisión de proyecto, no un atajo.
+para `src/components/layout/HomeLink.tsx`, donde el logo necesita ser un `<a>` común
+—`<Link>` no vuelve a desplazar cuando la URL ya coincide con el destino—.
+
+Ese archivo existe **solo** para acotar la excepción: contiene esa única ancla, así que
+`SiteHeader` conserva la regla activa. No mover el ancla de vuelta a la cabecera, y no
+agregar nada más a `HomeLink.tsx`. Son las **únicas dos** excepciones del proyecto; una
+tercera es una decisión de proyecto, no un atajo.
 
 **Solo dos componentes son de cliente:** `TraceRail` y `ThemeToggle`. Mantenerlo así.
 
