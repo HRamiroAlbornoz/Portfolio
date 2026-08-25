@@ -538,18 +538,27 @@ estática se construyó mucho antes de que esa petición existiera. Adoptarlo si
 perder el prerenderizado, medido en producción en 49 ms de TTFB.
 
 **Huella criptográfica del script.** Autoriza un script exacto y ningún otro, y es
-compatible con el prerenderizado. Se descartó al contar los scripts en línea que realmente
-sirve la página en producción:
+compatible con el prerenderizado. Se descartó al contar los scripts en línea que la página
+emite realmente. Este es el build del commit que introdujo estas cabeceras:
 
 ```
-1.    633 bytes | (function () { var allowed = ["system","light","dark"]   <- el del tema
-2.     43 bytes | (self.__next_f=self.__next_f||[]).push([0])              <- de Next.js
-3.  51940 bytes | self.__next_f.push([1,"1:\"$Sreact.fragment\"...         <- de Next.js
-4.   2723 bytes | self.__next_f.push([1,"32:I[27201,...                    <- de Next.js
+ 1.    633 bytes | (function () { var allowed = ["system","light","dark"]  <- el del tema
+ 2.     43 bytes | (self.__next_f=self.__next_f||[]).push([0])             <- de Next.js
+ 3.  18809 bytes | self.__next_f.push([1,"1:\"$Sreact.fragment\"...        <- de Next.js
+ 4.  17904 bytes | self.__next_f.push([1,"M23.5594 14.7228a.5269...        <- de Next.js
+ 5.  15099 bytes | self.__next_f.push([1,"2f:T49c,M1.125 0C.502 0...       <- de Next.js
+ 6.   2661 bytes | self.__next_f.push([1,"32:I[27201,...                   <- de Next.js
 ```
 
-Son cuatro, no uno. Tres los genera Next.js y contienen el contenido serializado de la
-página, así que su huella cambia **cada vez que se edita un texto o se agrega un proyecto**.
+Son seis, no uno. Cinco los genera Next.js y contienen el contenido serializado de la
+página —incluidos los trazados de los iconos, visibles en los ítems 4 y 5—, así que su
+huella cambia **cada vez que se edita un texto o se agrega un proyecto**.
+
+**Esa lista de arriba es una foto, y no se reproduce.** Una medición anterior sobre el
+mismo código había dado **cuatro** scripts, con otros tamaños: Next.js reparte ese
+contenido en más o menos trozos según el build. O sea que las huellas no solo cambiarían de
+valor, sino que ni siquiera se puede saber de antemano **cuántas** hacen falta.
+
 Mantenerlas a mano es inviable, y Next.js no ofrece nada que las calcule y las inyecte en la
 cabecera. El fallo además sería silencioso: el script del tema dejaría de ejecutarse y el
 síntoma sería el parpadeo al cargar, sin ningún error en consola.
@@ -579,6 +588,24 @@ temas de navegación, que el sitio no usa.
 
 No se agregó `X-Frame-Options` porque `frame-ancestors` cumple la misma función y la
 reemplaza en todos los navegadores actuales.
+
+### La barra de Vercel, solo en las vistas previas
+
+Vercel inyecta su barra de herramientas en los despliegues de vista previa. Necesita cargar
+recursos de `vercel.live`, `vercel.com` y `assets.vercel.com`, y abrir un websocket contra
+`ws-us3.pusher.com`. Con la política inicial esos orígenes quedaban bloqueados y la barra no
+cargaba.
+
+Esos orígenes se agregan **solo cuando `VERCEL_ENV` vale `preview`**, no en producción. La
+barra no corre en producción, así que autorizar ahí cinco orígenes externos sería aflojar la
+política a cambio de nada.
+
+De paso, la corrección dejó producción **más estricta** que antes: `connect-src 'self'` y
+`frame-src 'none'` ahora son explícitos, cuando antes heredaban de `default-src`.
+
+Las directivas exactas salen de la documentación de Vercel, no de prueba y error. Verificado
+construyendo con `VERCEL_ENV=preview` y leyendo la cabecera resultante en
+`.next/routes-manifest.json`.
 
 ### `unsafe-eval` solo en desarrollo
 

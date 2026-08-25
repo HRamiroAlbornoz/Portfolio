@@ -4,7 +4,7 @@ Portfolio personal de un desarrollador Full Stack con foco en backend. Sitio de 
 página, en español, sin dependencias de servidor: todo se prerenderiza durante el build y
 se sirve como archivos estáticos.
 
-**Sitio en producción:** pendiente de conectar a Vercel.
+**Sitio en producción:** <https://hernan-albornoz.vercel.app>
 
 ---
 
