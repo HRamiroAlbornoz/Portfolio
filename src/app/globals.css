@@ -8,7 +8,7 @@
   --light-line: #ddd5ca;
   --light-muted: #6b6157;
   --light-fore: #14120f;
-  --light-trace: #0c6a55;
+  --light-trace: #007c00;
   --light-pending: #836709;
 
   --dark-ink: #14120f;
@@ -16,7 +16,7 @@
   --dark-line: #3a3630;
   --dark-muted: #a39c92;
   --dark-fore: #f2efea;
-  --dark-trace: #6ee7c8;
+  --dark-trace: #9fc27c;
   --dark-pending: #d4a541;
 
   color-scheme: light;

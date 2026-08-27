@@ -13,7 +13,7 @@ const INK = "#14120f";
 const LINE = "#3a3630";
 const MUTED = "#a39c92";
 const FORE = "#f2efea";
-const TRACE = "#6ee7c8";
+const TRACE = "#9fc27c";
 
 const NODE_SIZE = 14;
 const RAIL_WIDTH = 2;
