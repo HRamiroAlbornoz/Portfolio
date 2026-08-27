@@ -9,11 +9,11 @@ export const alt = `${site.name} — ${site.role}`;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-const INK = "#0f1216";
-const LINE = "#2b3138";
-const MUTED = "#98a2ae";
-const FORE = "#e9edf2";
-const TRACE = "#6ee7c8";
+const INK = "#14120f";
+const LINE = "#3a3630";
+const MUTED = "#a39c92";
+const FORE = "#f2efea";
+const TRACE = "#9fc27c";
 
 const NODE_SIZE = 14;
 const RAIL_WIDTH = 2;

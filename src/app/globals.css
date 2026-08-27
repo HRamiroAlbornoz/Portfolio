@@ -3,21 +3,21 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --light-ink: #f7f8f9;
+  --light-ink: #f6f2ec;
   --light-surface: #ffffff;
-  --light-line: #d3d9e0;
-  --light-muted: #5a6673;
-  --light-fore: #0f1216;
-  --light-trace: #0c6a55;
-  --light-pending: #8a6d0b;
+  --light-line: #ddd5ca;
+  --light-muted: #6b6157;
+  --light-fore: #14120f;
+  --light-trace: #007c00;
+  --light-pending: #836709;
 
-  --dark-ink: #0f1216;
-  --dark-surface: #171b21;
-  --dark-line: #2b3138;
-  --dark-muted: #98a2ae;
-  --dark-fore: #e9edf2;
-  --dark-trace: #6ee7c8;
-  --dark-pending: #c9a227;
+  --dark-ink: #14120f;
+  --dark-surface: #24201c;
+  --dark-line: #3a3630;
+  --dark-muted: #a39c92;
+  --dark-fore: #f2efea;
+  --dark-trace: #9fc27c;
+  --dark-pending: #d4a541;
 
   color-scheme: light;
 
@@ -86,6 +86,11 @@
   --text-title--line-height: 1.15;
   --text-title--letter-spacing: -0.02em;
   --text-title--font-weight: 600;
+
+  --text-subtitle: clamp(1.375rem, 2.5vw, 1.75rem);
+  --text-subtitle--line-height: 1.2;
+  --text-subtitle--letter-spacing: -0.015em;
+  --text-subtitle--font-weight: 600;
 
   --text-body: 1.0625rem;
   --text-body--line-height: 1.7;

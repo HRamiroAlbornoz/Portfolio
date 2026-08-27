@@ -14,7 +14,7 @@ export function PageSection({ children, id, title }: PageSectionProps) {
   return (
     <section
       aria-labelledby={titleId}
-      className="flex scroll-mt-8 flex-col gap-6"
+      className="flex scroll-mt-8 flex-col gap-8"
       id={id}
     >
       <h2 className="font-display text-title text-fore" id={titleId}>

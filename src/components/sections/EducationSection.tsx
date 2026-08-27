@@ -10,9 +10,9 @@ export function EducationSection({ title }: EducationSectionProps) {
     <PageSection id="education" title={title}>
       {education.map((entry) => (
         <article className="flex flex-col gap-3" key={entry.title}>
-          <h3 className="font-display text-title text-fore">{entry.title}</h3>
+          <h3 className="font-display text-subtitle text-fore">{entry.title}</h3>
 
-          <p className="font-mono text-eyebrow uppercase text-muted">
+          <p className="font-mono text-eyebrow uppercase text-pending">
             {entry.institution} · {entry.period}
           </p>
 

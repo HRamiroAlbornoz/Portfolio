@@ -111,7 +111,7 @@ export function TraceRail({ label, sections }: TraceRailProps) {
     <nav
       ref={railRef}
       aria-label={label}
-      className="pointer-events-none fixed top-1/2 left-6 z-20 hidden -translate-y-1/2 lg:block"
+      className="pointer-events-none fixed top-1/2 left-[max(1.5rem,calc(50%-33rem))] z-20 hidden -translate-y-1/2 lg:block"
     >
       <div className="relative">
         <span
@@ -135,7 +135,7 @@ export function TraceRail({ label, sections }: TraceRailProps) {
                   aria-hidden="true"
                   className="size-[11px] shrink-0 rounded-full border border-line bg-ink transition-colors group-hover:border-trace group-aria-[current=true]:border-trace group-aria-[current=true]:bg-trace"
                 />
-                <span className="font-mono text-eyebrow whitespace-nowrap text-muted opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100 group-aria-[current=true]:text-trace group-aria-[current=true]:opacity-100">
+                <span className="font-mono text-eyebrow whitespace-nowrap text-muted opacity-0 transition-opacity group-hover:text-fore group-hover:opacity-100 group-focus-visible:opacity-100 group-aria-[current=true]:text-trace group-aria-[current=true]:opacity-100 xl:opacity-100">
                   {section.label}
                 </span>
               </a>
