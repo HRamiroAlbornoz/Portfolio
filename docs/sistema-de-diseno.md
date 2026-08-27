@@ -7,13 +7,6 @@ Todo el sistema vive en un solo archivo, [`src/app/globals.css`](../src/app/glob
 Ningún componente del proyecto escribe un color hexadecimal ni un tamaño de letra
 arbitrario.
 
-> **Estado de implementación.** Este documento describe el diseño completo, no lo que ya
-> está construido. Hoy existen los tokens, la tipografía, el sistema de temas y una
-> página que renderiza todo el contenido con marcado semántico. **La traza, el encabezado
-> y el botón de tema todavía no están construidos**: llegan en la Fase 3. Las secciones
-> que los describen son la especificación a seguir, no una descripción de lo que verías
-> abriendo el sitio hoy.
-
 ---
 
 ## Dirección visual: "Trazado"
@@ -62,13 +55,13 @@ repitiera los valores, tarde o temprano se desincronizarían.
 
 | Token | Claro | Oscuro | Para qué |
 |---|---|---|---|
-| `ink` | `#f7f8f9` | `#0f1216` | Fondo de la página |
-| `surface` | `#ffffff` | `#171b21` | Superficies elevadas |
-| `line` | `#d3d9e0` | `#2b3138` | Hairlines, bordes, traza inactiva |
-| `muted` | `#5a6673` | `#98a2ae` | Texto secundario |
-| `fore` | `#0f1216` | `#e9edf2` | Texto principal |
+| `ink` | `#f6f2ec` | `#14120f` | Fondo de la página |
+| `surface` | `#ffffff` | `#24201c` | Tarjetas de proyecto |
+| `line` | `#ddd5ca` | `#3a3630` | Hairlines, bordes, traza inactiva |
+| `muted` | `#6b6157` | `#a39c92` | Texto secundario |
+| `fore` | `#14120f` | `#f2efea` | Texto principal |
 | `trace` | `#0c6a55` | `#6ee7c8` | Traza activa, nodos, enlaces, foco |
-| `pending` | `#8a6d0b` | `#c9a227` | **Solo** el estado "sin desplegar" |
+| `pending` | `#836709` | `#d4a541` | Metadatos de proyecto |
 
 El acento cambia de familia entre temas —menta clara sobre fondo oscuro, verde-azulado
 profundo sobre fondo claro— porque un mismo valor no puede tener contraste suficiente
@@ -89,39 +82,124 @@ Calculados con la fórmula de luminancia relativa de WCAG 2.1, no estimados a oj
 
 | Combinación | Ratio | Nivel |
 |---|---|---|
-| `fore` sobre `ink` | 15.97 | AAA |
-| `trace` sobre `ink` | 12.45 | AAA |
-| `pending` sobre `ink` | 7.76 | AAA |
-| `muted` sobre `ink` | 7.26 | AAA |
-| `fore` sobre `surface` | 14.70 | AAA |
-| `muted` sobre `surface` | 6.68 | AA |
-| `line` sobre `ink` | 1.43 | decorativo |
+| `fore` sobre `ink` | 16.30 | AAA |
+| `trace` sobre `ink` | 12.40 | AAA |
+| `pending` sobre `ink` | 8.24 | AAA |
+| `muted` sobre `ink` | 6.88 | AA |
+| `fore` sobre `surface` | 14.10 | AAA |
+| `trace` sobre `surface` | 10.73 | AAA |
+| `pending` sobre `surface` | 7.13 | AAA |
+| `muted` sobre `surface` | 5.95 | AA |
+| `line` sobre `ink` | 1.56 | decorativo |
 
 **Tema claro**
 
 | Combinación | Ratio | Nivel |
 |---|---|---|
-| `fore` sobre `surface` | 18.78 | AAA |
-| `fore` sobre `ink` | 17.66 | AAA |
-| `trace` sobre `ink` | 6.16 | AA |
-| `muted` sobre `surface` | 5.86 | AA |
-| `muted` sobre `ink` | 5.51 | AA |
-| `pending` sobre `ink` | 4.62 | AA |
-| `line` sobre `ink` | 1.34 | decorativo |
+| `fore` sobre `surface` | 18.70 | AAA |
+| `fore` sobre `ink` | 16.77 | AAA |
+| `trace` sobre `surface` | 6.55 | AA |
+| `muted` sobre `surface` | 6.05 | AA |
+| `trace` sobre `ink` | 5.87 | AA |
+| `muted` sobre `ink` | 5.42 | AA |
+| `pending` sobre `surface` | 5.37 | AA |
+| `pending` sobre `ink` | 4.82 | AA |
+| `line` sobre `ink` | 1.30 | decorativo |
 
-`line` no alcanza ningún nivel a propósito: son separadores decorativos que no
-transmiten información, y WCAG no exige contraste para ese caso. La traza usa `line`
-solo en su tramo inactivo; los nodos, que sí son interactivos, usan `trace` o `muted`.
+`line` no alcanza ningún nivel, y desde el rediseño hace falta justificarlo mejor, porque
+además de hairlines ahora dibuja **el borde de las tarjetas de proyecto**: pasó de separador
+a elemento estructural.
+
+Se sostiene igual. WCAG 1.4.11 exige 3:1 para objetos gráficos **necesarios para entender el
+contenido**, y el borde de una tarjeta no lo es: el agrupamiento ya lo comunican la superficie
+elevada y el espaciado, y el texto se lee completo y en orden aunque el borde no se perciba.
+El borde refuerza, no informa.
+
+Dentro de la traza, `line` dibuja el tramo inactivo del riel y **el borde de los nodos
+todavía no alcanzados**, que además llevan `ink` de relleno. El nodo activo pasa a `trace`,
+relleno y borde. La etiqueta de cada sección usa `muted`, y la activa `trace`.
+
+### Por qué las etiquetas del riel no llevan opacidad
+
+Al volverlas siempre visibles se probó atenuarlas con `opacity-60`, para que no compitieran
+con el contenido. Medido, ese 60 % da **3.24** en oscuro y **2.46** en claro: por debajo del
+4.5 que exige AA, y para texto de 12 px.
+
+Se midió toda la escala. Solo la **opacidad plena** pasa en los dos temas: 0.8 pasa en
+oscuro y falla en claro; 0.9 también. Es decir, no había un valor intermedio aceptable.
+
+Las etiquetas usan entonces `muted` a opacidad completa (6.88 y 5.42), y la jerarquía la da
+el color: `muted` para las secciones no alcanzadas, `trace` para la activa.
+
+Un detalle que hacía inviable confiar en el hover: Tailwind envuelve la variante `hover:` en
+`@media (hover: hover)`, así que en una pantalla táctil grande —donde las etiquetas sí se
+muestran— no existe estado de hover que pudiera compensar el bajo contraste.
 
 ### El acento que hubo que corregir
 
 El valor original del acento claro era `#0f8f73`. Medido dio **3.80**, por debajo del
 4.5 que WCAG exige para texto normal. Se probó una escala de versiones más oscuras:
-`#0e8168` daba 4.53, apenas por encima del límite y sin margen. Se eligió `#0c6a55`
-(6.16) por tener holgura real sin perder la identidad verde-azulada.
+`#0e8168` daba 4.53, apenas por encima del límite y sin margen. Se eligió `#0c6a55` por
+tener holgura real sin perder la identidad verde-azulada: sobre el fondo de entonces daba
+6.16, y sobre el fondo cálido actual da 5.87.
 
 El error no lo detectó la revisión visual sino la medición. Cualquier color nuevo se
 mide antes de entrar.
+
+### El giro cálido, y de dónde salió el calor
+
+La primera paleta era enteramente fría: tinta azulada más menta. En `#0f1216` el canal azul
+era el más alto, y no había ningún valor cálido **en uso**. El resultado se describió como
+"austero, frío, le falta vida".
+
+El calor no vino de afuera. Vino de `pending`, un token que existía desde el primer día y
+que **casi no se veía**: marcaba el estado "sin desplegar" de la sección Proyectos y el
+código de la página 404. Ese ámbar es el color de un estado pendiente en un log, así que
+pertenece al vocabulario del sitio en lugar de importarse.
+
+**El token pasó a tener dos usos, y conviene ser explícito al respecto.** Sigue marcando
+esos dos estados —el vacío de Proyectos vive en
+[`ProjectsSection.tsx`](../src/components/sections/ProjectsSection.tsx) aunque hoy no se vea,
+y el `404` en [`not-found.tsx`](../src/app/not-found.tsx)— y ahora además marca los metadatos
+de proyectos y formación.
+
+Lo que unifica los tres usos es que ninguno es contenido principal: son **señales de segundo
+orden** que acompañan al texto sin competir con él. Si algún día uno de esos usos necesita
+un color propio, el token se parte en dos; hoy la distinción no gana nada.
+
+Se descartó agregar un cálido ajeno —terracota, arena— justamente por eso: habría sido un
+color sin relación con el tema del sitio.
+
+Los neutros giraron de azul a cálido: en `#14120f` el canal rojo pasa a ser el más alto. Es
+el mismo negro profundo, con temperatura. **La menta se conservó sin cambios**: fondo cálido
+con acento frío contrasta mejor que un esquema todo cálido, y mantiene la identidad técnica.
+
+### Por qué `surface` tuvo que alejarse de `ink`
+
+`surface` estaba definido desde el primer día y solo se usaba en un lugar: el fondo del
+enlace de salto cuando recibe el foco ([`SkipLink.tsx`](../src/components/layout/SkipLink.tsx)).
+Ahí funcionaba porque ese enlace flota sobre el contenido con su propio borde, así que no
+dependía de contrastar con el fondo.
+
+Al ir a usarlo para las tarjetas de proyecto, la medición mostró el problema: su separación
+de `ink` era de **1.09** en oscuro y **1.06** en claro. Con esa diferencia, una tarjeta es
+invisible.
+
+No alcanzaba con empezar a usarlo: había que separarlo. Los valores nuevos dan **1.16** y
+**1.12**. Sigue siendo una diferencia sutil —una tarjeta no debe gritar— pero perceptible.
+
+Dentro de una tarjeta, el contenedor de imagen usa `ink`, no `surface`: sobre una superficie
+elevada, el hueco de la captura tiene que hundirse, no fundirse.
+
+### El ámbar que hubo que corregir
+
+`#8a6d0b` funcionaba sobre el fondo claro anterior. Sobre el fondo nuevo, más cálido y algo
+más oscuro, dio **4.41**: por debajo del 4.5 que exige AA para texto normal. Se oscureció a
+`#836709`, que da 4.82.
+
+Es el segundo color de este sistema que la medición corrige antes de llegar a producción. La
+regla se sostiene: **ningún color entra sin medirse, y cambiar el fondo obliga a volver a
+medir todo lo que se apoya en él.**
 
 ---
 
