@@ -60,7 +60,7 @@ repitiera los valores, tarde o temprano se desincronizarían.
 | `line` | `#ddd5ca` | `#3a3630` | Hairlines, bordes, traza inactiva |
 | `muted` | `#6b6157` | `#a39c92` | Texto secundario |
 | `fore` | `#14120f` | `#f2efea` | Texto principal |
-| `trace` | `#0c6a55` | `#6ee7c8` | Traza activa, nodos, enlaces, foco |
+| `trace` | `#007c00` | `#9fc27c` | Traza activa, nodos, enlaces, foco |
 | `pending` | `#836709` | `#d4a541` | Metadatos de proyecto |
 
 El acento cambia de familia entre temas —menta clara sobre fondo oscuro, verde-azulado
@@ -83,12 +83,12 @@ Calculados con la fórmula de luminancia relativa de WCAG 2.1, no estimados a oj
 | Combinación | Ratio | Nivel |
 |---|---|---|
 | `fore` sobre `ink` | 16.30 | AAA |
-| `trace` sobre `ink` | 12.40 | AAA |
-| `pending` sobre `ink` | 8.24 | AAA |
-| `muted` sobre `ink` | 6.88 | AA |
 | `fore` sobre `surface` | 14.10 | AAA |
-| `trace` sobre `surface` | 10.73 | AAA |
+| `trace` sobre `ink` | 9.33 | AAA |
+| `pending` sobre `ink` | 8.24 | AAA |
+| `trace` sobre `surface` | 8.07 | AAA |
 | `pending` sobre `surface` | 7.13 | AAA |
+| `muted` sobre `ink` | 6.88 | AA |
 | `muted` sobre `surface` | 5.95 | AA |
 | `line` sobre `ink` | 1.56 | decorativo |
 
@@ -98,11 +98,11 @@ Calculados con la fórmula de luminancia relativa de WCAG 2.1, no estimados a oj
 |---|---|---|
 | `fore` sobre `surface` | 18.70 | AAA |
 | `fore` sobre `ink` | 16.77 | AAA |
-| `trace` sobre `surface` | 6.55 | AA |
 | `muted` sobre `surface` | 6.05 | AA |
-| `trace` sobre `ink` | 5.87 | AA |
 | `muted` sobre `ink` | 5.42 | AA |
+| `trace` sobre `surface` | 5.41 | AA |
 | `pending` sobre `surface` | 5.37 | AA |
+| `trace` sobre `ink` | 4.85 | AA |
 | `pending` sobre `ink` | 4.82 | AA |
 | `line` sobre `ink` | 1.30 | decorativo |
 
@@ -135,16 +135,40 @@ Un detalle que hacía inviable confiar en el hover: Tailwind envuelve la variant
 `@media (hover: hover)`, así que en una pantalla táctil grande —donde las etiquetas sí se
 muestran— no existe estado de hover que pudiera compensar el bajo contraste.
 
-### El acento que hubo que corregir
+### El acento pasó de menta a verde, y por qué
 
-El valor original del acento claro era `#0f8f73`. Medido dio **3.80**, por debajo del
-4.5 que WCAG exige para texto normal. Se probó una escala de versiones más oscuras:
-`#0e8168` daba 4.53, apenas por encima del límite y sin margen. Se eligió `#0c6a55` por
-tener holgura real sin perder la identidad verde-azulada: sobre el fondo de entonces daba
-6.16, y sobre el fondo cálido actual da 5.87.
+El acento fue primero una menta fría (`#6ee7c8` en oscuro, `#0f8f73` en claro). Ese primer
+valor claro se corrigió antes de existir: medido daba **3.80**, por debajo del 4.5 que WCAG
+exige para texto normal. Se probó una escala más oscura —`#0e8168` daba 4.53, sobre el límite
+y sin margen— y quedó `#0c6a55`.
 
-El error no lo detectó la revisión visual sino la medición. Cualquier color nuevo se
-mide antes de entrar.
+Al girar los neutros hacia el cálido, la menta quedó como **lo único frío de una página
+cálida**, y se cambió a verde. La sustitución es del token completo, así que también cambian
+la línea de la traza, sus nodos, el anillo de foco y el color de selección.
+
+**El límite de esa decisión no es estético sino de contraste**, y conviene tenerlo escrito:
+cuanto más cálido el verde, más se acerca al ámbar de `pending`. Son vecinos en el espectro,
+y la menta se distinguía tan bien justamente por ser fría. La distancia perceptual contra el
+ámbar pasó de **72.2 a 40.2** en oscuro y de **56.5 a 53** en claro. Por debajo de 40 los dos
+acentos empiezan a confundirse: un oliva intermedio (`#4f6636`) daba 33.1 y se descartó al
+verlo.
+
+### Por qué el verde claro está más saturado que el oscuro
+
+`#007c00` tiene croma **70**; `#9fc27c`, **40**. La asimetría es deliberada y responde a una
+restricción física, no a un gusto.
+
+Sobre fondo claro, un acento tiene que ser **oscuro** para alcanzar 4.5, y oscurecer un color
+le quita viveza. El tema claro nunca va a tener el brillo del oscuro. La compensación posible
+es subir la saturación, y `#007c00` es el máximo: una búsqueda sobre el espacio de color
+mostró que ningún verde más saturado cumple AA sobre `#f6f2ec` conservando distancia del
+ámbar.
+
+Para dimensionarlo: la menta clara anterior tenía croma **31**, y el oliva descartado, 35.
+
+Se aceptó que un verde puro puede leerse como color de sistema —el del "operación exitosa"—
+antes que dejar el tema claro apagado. Fue una decisión de quien mira el sitio, tomada
+comparando los tres valores en pantalla, no en una tabla.
 
 ### El giro cálido, y de dónde salió el calor
 
