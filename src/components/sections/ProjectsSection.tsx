@@ -32,19 +32,22 @@ export function ProjectsSection({
 
   return (
     <PageSection id="projects" title={title}>
-      <ol className="flex flex-col gap-14">
+      <ol className="flex flex-col gap-6">
         {projects.map((project) => (
-          <li className="flex flex-col gap-4" key={project.slug}>
-            <h3 className="font-display text-title text-fore">
+          <li
+            className="flex flex-col gap-4 rounded-lg border border-line bg-surface p-6 sm:p-8"
+            key={project.slug}
+          >
+            <h3 className="font-display text-subtitle text-fore">
               {project.name}
             </h3>
 
-            <p className="font-mono text-eyebrow uppercase text-muted">
+            <p className="font-mono text-eyebrow uppercase text-pending">
               {project.role} · {project.year}
             </p>
 
             {project.image !== undefined && (
-              <div className="relative aspect-video w-full overflow-hidden rounded border border-line bg-surface">
+              <div className="relative aspect-video w-full overflow-hidden rounded border border-line bg-ink">
                 <Image
                   alt={project.image.alt}
                   className="object-cover"
