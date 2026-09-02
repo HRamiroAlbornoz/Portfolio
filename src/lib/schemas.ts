@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { TECHNOLOGY_ICON_NAMES } from "@/lib/icons";
+import { LOCALES } from "@/lib/locale";
 
 const MAX_LABEL_LENGTH = 48;
 const MAX_HEADLINE_LENGTH = 140;
@@ -81,7 +82,7 @@ export const projectImageSchema = z.object({
 
 export const resumeSchema = z.object({
   label,
-  language: z.enum(["es", "en"]),
+  language: z.enum(LOCALES),
   path: internalPdfPath,
 });
 
@@ -199,6 +200,10 @@ export const projectsSchema = z
 
 export type SectionId = z.infer<typeof sectionIdSchema>;
 export type Section = z.infer<typeof sectionSchema>;
+export type Sections = z.infer<typeof sectionsSchema>;
+export type Stack = z.infer<typeof stackSchema>;
+export type Education = z.infer<typeof educationSchema>;
+export type Projects = z.infer<typeof projectsSchema>;
 export type SocialLink = z.infer<typeof socialLinkSchema>;
 export type Resume = z.infer<typeof resumeSchema>;
 export type Site = z.infer<typeof siteSchema>;

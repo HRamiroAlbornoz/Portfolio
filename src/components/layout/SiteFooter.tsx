@@ -1,23 +1,25 @@
-import { site } from "@/content/site";
-import { ui } from "@/content/ui";
+import type { Site, Ui } from "@/lib/schemas";
 
-export function SiteFooter() {
+type SiteFooterProps = {
+  footer: Ui["footer"];
+  name: Site["name"];
+};
+
+export function SiteFooter({ footer, name }: SiteFooterProps) {
   return (
     <footer className="border-t border-line">
       <div className="mx-auto flex w-full max-w-3xl flex-wrap items-center gap-x-6 gap-y-2 px-6 py-10 font-mono text-eyebrow text-muted sm:whitespace-nowrap">
-        <p>
-          © {site.name}
-        </p>
+        <p>© {name}</p>
 
-        <p>{ui.footer.note}</p>
+        <p>{footer.note}</p>
 
         <a
           className="inline-flex min-h-11 items-center text-trace underline underline-offset-4"
-          href={ui.footer.sourceUrl}
+          href={footer.sourceUrl}
           target="_blank"
           rel="noreferrer"
         >
-          {ui.footer.sourceLabel}
+          {footer.sourceLabel}
         </a>
       </div>
     </footer>

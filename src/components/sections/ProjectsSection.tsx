@@ -1,18 +1,20 @@
 import Image from "next/image";
 
 import { PageSection } from "@/components/ui/PageSection";
-import { projects } from "@/content/projects";
+import type { Projects, Ui } from "@/lib/schemas";
 
 type ProjectsSectionProps = {
-  emptyLabel: string;
-  liveLabel: string;
-  repositoryLabel: string;
+  emptyLabel: Ui["projects"]["empty"];
+  liveLabel: Ui["projects"]["live"];
+  projects: Projects;
+  repositoryLabel: Ui["projects"]["repository"];
   title: string;
 };
 
 export function ProjectsSection({
   emptyLabel,
   liveLabel,
+  projects,
   repositoryLabel,
   title,
 }: ProjectsSectionProps) {

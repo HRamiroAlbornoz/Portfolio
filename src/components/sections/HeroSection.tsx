@@ -1,6 +1,10 @@
-import { site } from "@/content/site";
+import type { Site } from "@/lib/schemas";
 
-export function HeroSection() {
+type HeroSectionProps = {
+  site: Site;
+};
+
+export function HeroSection({ site }: HeroSectionProps) {
   return (
     <header className="flex flex-col gap-6">
       <p className="font-mono text-eyebrow uppercase text-trace">

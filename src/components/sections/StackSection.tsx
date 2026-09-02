@@ -1,12 +1,13 @@
 import { PageSection } from "@/components/ui/PageSection";
 import { TechnologyIcon } from "@/components/ui/TechnologyIcon";
-import { stack } from "@/content/stack";
+import type { Stack } from "@/lib/schemas";
 
 type StackSectionProps = {
+  stack: Stack;
   title: string;
 };
 
-export function StackSection({ title }: StackSectionProps) {
+export function StackSection({ stack, title }: StackSectionProps) {
   return (
     <PageSection id="stack" title={title}>
       <div className="relative">

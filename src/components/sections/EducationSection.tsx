@@ -1,14 +1,15 @@
 import { PageSection } from "@/components/ui/PageSection";
-import { education } from "@/content/education";
+import type { Education } from "@/lib/schemas";
 
 type EducationSectionProps = {
+  entries: Education;
   title: string;
 };
 
-export function EducationSection({ title }: EducationSectionProps) {
+export function EducationSection({ entries, title }: EducationSectionProps) {
   return (
     <PageSection id="education" title={title}>
-      {education.map((entry) => (
+      {entries.map((entry) => (
         <article className="flex flex-col gap-3" key={entry.title}>
           <h3 className="font-display text-subtitle text-fore">{entry.title}</h3>
 
