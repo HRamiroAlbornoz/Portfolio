@@ -17,6 +17,18 @@ import {
 
 const THEME_OPTIONS = THEME_PREFERENCES;
 
+const THEME_ICON_PATHS: Record<ThemePreference, readonly string[]> = {
+  system: [
+    "M4 4h16a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z",
+    "M8 21h8M12 17v4",
+  ],
+  light: [
+    "M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0",
+    "M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4",
+  ],
+  dark: ["M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"],
+};
+
 function readPreferenceFromDom(): ThemePreference {
   const value = document.documentElement.getAttribute(
     THEME_PREFERENCE_ATTRIBUTE,
@@ -103,10 +115,27 @@ export function ThemeToggle({ labels }: ThemeToggleProps) {
             onChange={() => selectPreference(option)}
           />
           <label
-            className="inline-flex min-h-11 cursor-pointer items-center rounded px-3 font-mono text-eyebrow uppercase text-muted transition-colors hover:text-fore peer-checked:text-trace peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-trace"
+            className="inline-flex min-h-11 w-11 cursor-pointer items-center justify-center rounded border border-transparent px-3 font-mono text-eyebrow uppercase text-muted transition-colors hover:text-fore peer-checked:border-trace peer-checked:bg-surface peer-checked:text-trace peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-trace sm:w-auto sm:justify-start"
             htmlFor={`theme-option-${option}`}
           >
-            {labels.options[option]}
+            <svg
+              aria-hidden="true"
+              className="size-4 shrink-0 sm:hidden"
+              fill="none"
+              stroke="currentColor"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={1.5}
+              viewBox="0 0 24 24"
+            >
+              {THEME_ICON_PATHS[option].map((path) => (
+                <path d={path} key={path} />
+              ))}
+            </svg>
+
+            <span className="sr-only sm:not-sr-only">
+              {labels.options[option]}
+            </span>
           </label>
         </div>
       ))}

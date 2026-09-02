@@ -1,14 +1,16 @@
+import type { ReactNode } from "react";
+
 type HomeLinkProps = {
-  label: string;
+  children: ReactNode;
 };
 
-export function HomeLink({ label }: HomeLinkProps) {
+export function HomeLink({ children }: HomeLinkProps) {
   return (
     <a
       className="inline-flex min-h-11 items-center font-mono text-eyebrow uppercase text-fore"
       href="/#main-content"
     >
-      {label}
+      {children}
     </a>
   );
 }
