@@ -5,6 +5,7 @@ import { EducationSection } from "@/components/sections/EducationSection";
 import { HeroSection } from "@/components/sections/HeroSection";
 import { ProjectsSection } from "@/components/sections/ProjectsSection";
 import { StackSection } from "@/components/sections/StackSection";
+import { LanguageLink } from "@/components/ui/LanguageLink";
 import { getContent } from "@/content";
 import type { Locale } from "@/lib/locale";
 import type { SectionId, Sections } from "@/lib/schemas";
@@ -30,7 +31,10 @@ export function SiteHome({ locale }: SiteHomeProps) {
         id="main-content"
         tabIndex={-1}
       >
-        <HeroSection site={site} />
+        <HeroSection
+          languageLink={<LanguageLink language={ui.language} />}
+          site={site}
+        />
 
         <AboutSection
           paragraphs={site.bio}

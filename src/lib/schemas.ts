@@ -110,6 +110,11 @@ export const uiSchema = z.object({
     railLabel: label,
     skipLabel: label,
   }),
+  language: z.object({
+    code: z.enum(LOCALES),
+    label: label,
+    description: label,
+  }),
   notFound: z.object({
     code: label,
     title: headline,

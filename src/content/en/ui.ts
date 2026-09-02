@@ -7,6 +7,11 @@ export const ui = uiSchema.parse({
     railLabel: "Secciones del sitio",
     skipLabel: "Saltar al contenido",
   },
+  language: {
+    code: "es",
+    label: "ES",
+    description: "View this site in Spanish",
+  },
   notFound: {
     code: "Error 404",
     title: "Esta página no existe",

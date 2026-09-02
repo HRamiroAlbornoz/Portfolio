@@ -5,7 +5,7 @@ import {
   renderPreviewImage,
 } from "@/lib/preview-image";
 
-const { site } = getContent("es");
+const { site } = getContent("en");
 
 export const alt = `${site.name} — ${site.role}`;
 export const size = PREVIEW_SIZE;

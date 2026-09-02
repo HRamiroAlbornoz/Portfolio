@@ -39,7 +39,11 @@ export function SiteDocument({ children, locale }: SiteDocumentProps) {
 
         {children}
 
-        <SiteFooter footer={ui.footer} name={site.name} />
+        <SiteFooter
+          footer={ui.footer}
+          language={ui.language}
+          name={site.name}
+        />
       </body>
     </html>
   );
