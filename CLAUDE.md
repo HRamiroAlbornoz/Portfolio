@@ -62,9 +62,15 @@ prefijos `--light-*` y `--dark-*`, y tres bloques —`:root`, `.dark` y el respa
 `prefers-color-scheme`— apuntan a una de ellas sin repetir valores.
 
 **Excepción, y hay que mantenerla sincronizada a mano:** `src/app/opengraph-image.tsx`
-repite cinco valores de la paleta oscura como constantes de TypeScript, porque lo dibuja
+repite cuatro valores de la paleta oscura como constantes de TypeScript, porque lo dibuja
 Satori, que no ejecuta CSS. Si cambia un color del tema oscuro, hay que cambiarlo ahí
 también.
+
+**Y una segunda trampa del mismo archivo:** Next.js invalida la caché de esa imagen con un
+hash **del contenido del archivo**, no de los datos que dibuja. Si cambia un texto de
+`src/content/site.ts` que aparece en la imagen, la imagen cambia pero **la URL no**, y las
+cachés externas siguen sirviendo la vieja. Al tocar contenido que sale en la
+previsualización, hay que tocar también `opengraph-image.tsx`.
 
 ### La frontera servidor/cliente es un error de compilación
 

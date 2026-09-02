@@ -68,7 +68,7 @@ profundo sobre fondo claro— porque un mismo valor no puede tener contraste suf
 contra dos fondos opuestos.
 
 > **Hay una excepción, y está fuera del CSS.** La imagen de previsualización
-> ([`opengraph-image.tsx`](../src/app/opengraph-image.tsx)) repite cinco valores de la
+> ([`opengraph-image.tsx`](../src/app/opengraph-image.tsx)) repite cuatro valores de la
 > paleta oscura como constantes de TypeScript, porque la dibuja Satori, que no ejecuta
 > CSS y no puede leer variables. **Si cambiás un color del tema oscuro, cambialo también
 > ahí.** El razonamiento completo está en
