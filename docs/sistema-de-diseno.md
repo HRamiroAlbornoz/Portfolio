@@ -437,7 +437,7 @@ así que es imposible usar un tamaño y equivocarse en el resto.
 
 | Clase | Tamaño | Interlineado | Espaciado | Peso |
 |---|---|---|---|---|
-| `text-display` | `clamp(3rem, 12vw, 8.5rem)` | 0.92 | -0.035em | 700 |
+| `text-display` | `clamp(3rem, 12vw, 6.5rem)` | 0.92 | -0.035em | 700 |
 | `text-title` | `clamp(1.75rem, 4vw, 2.75rem)` | 1.15 | -0.02em | 600 |
 | `text-subtitle` | `clamp(1.375rem, 2.5vw, 1.75rem)` | 1.2 | -0.015em | 600 |
 | `text-body` | `1.0625rem` | 1.7 | — | — |
@@ -449,6 +449,30 @@ igual. El escalón intermedio es lo que separa "Proyectos" de "NexoPay".
 
 `clamp(mínimo, preferido, máximo)` produce tipografía fluida sin una sola consulta de
 medios: el tamaño crece con el ancho de la ventana pero nunca sale de sus límites.
+
+### Por qué el máximo de `text-display` es 6.5rem y no 8.5rem
+
+El máximo era `8.5rem` y empujaba la frase de presentación **por debajo del pliegue**. En un
+portátil de 1366 × 768, la ventana real deja unos 625 px de alto una vez descontadas las
+pestañas y la barra de direcciones; la frase terminaba en el pixel 729. Quien entraba veía un
+nombre enorme y tenía que desplazarse para enterarse de qué hace.
+
+Medido en el navegador, cambiando la variable y observando el resultado:
+
+| Máximo | Tamaño | Líneas del nombre | Fin de la frase | ¿Entra en 625 px? |
+|---|---|---|---|---|
+| `8.5rem` | 136 px | 3 | 729 | no |
+| `7rem` | 112 px | 3 | 662 | no |
+| **`6.5rem`** | **104 px** | **2** | **545** | **sí** |
+| `5.5rem` | 88 px | 2 | 515 | sí |
+
+**Lo que manda no es el tamaño sino el número de líneas.** Bajar de 136 a 112 px ahorra 67 px
+y no alcanza, porque el nombre se sigue partiendo en tres. El salto ocurre cuando "Hernán
+Ramiro" entra en un renglón, entre 104 y 112 px. Por eso `6.5rem`: es el valor más grande que
+consigue dos líneas.
+
+El cambio **no afecta al teléfono**. A 320 px el `12vw` da 38 px y manda el mínimo de `3rem`;
+el máximo recién empieza a aplicarse por encima de los 867 px de ancho.
 
 ---
 
