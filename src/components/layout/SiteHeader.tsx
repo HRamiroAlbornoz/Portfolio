@@ -4,9 +4,9 @@ import { site } from "@/content/site";
 import { ui } from "@/content/ui";
 
 function splitName(fullName: string): { first: string; last: string } {
-  const parts = fullName.split(" ");
+  const [first = fullName, ...rest] = fullName.split(" ");
 
-  return { first: parts.at(0) ?? fullName, last: parts.at(-1) ?? "" };
+  return { first, last: rest.at(-1) ?? "" };
 }
 
 export function SiteHeader() {
@@ -17,7 +17,7 @@ export function SiteHeader() {
       <div className="mx-auto flex h-[var(--header-height)] w-full max-w-3xl items-center justify-between px-6">
         <HomeLink>
           {first}
-          <span className="hidden sm:inline">&nbsp;{last}</span>
+          {last !== "" && <span className="hidden sm:inline">&nbsp;{last}</span>}
         </HomeLink>
 
         <ThemeToggle labels={ui.theme} />

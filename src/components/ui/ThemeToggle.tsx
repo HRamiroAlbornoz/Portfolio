@@ -115,7 +115,7 @@ export function ThemeToggle({ labels }: ThemeToggleProps) {
             onChange={() => selectPreference(option)}
           />
           <label
-            className="inline-flex min-h-11 w-11 cursor-pointer items-center justify-center rounded px-3 font-mono text-eyebrow uppercase text-muted transition-colors hover:text-fore peer-checked:bg-surface peer-checked:text-trace peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-trace sm:w-auto sm:justify-start"
+            className="inline-flex min-h-11 w-11 cursor-pointer items-center justify-center rounded border border-transparent px-3 font-mono text-eyebrow uppercase text-muted transition-colors hover:text-fore peer-checked:border-trace peer-checked:bg-surface peer-checked:text-trace peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-trace sm:w-auto sm:justify-start"
             htmlFor={`theme-option-${option}`}
           >
             <svg

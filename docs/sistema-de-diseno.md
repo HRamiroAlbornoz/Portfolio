@@ -515,9 +515,26 @@ Una relación de 1.0 es "misma claridad". Con 1.12, quien no distingue el rojo d
 los tres textos idénticos y no puede saber qué tema está puesto. El problema existía desde
 antes, pero al quitar el texto en móvil el color quedaba como **única** pista.
 
-La opción activa lleva ahora fondo `surface` además del color. Un fondo es una diferencia de
-forma, no de tono, así que sobrevive a cualquier tipo de daltonismo; y `surface` es el mismo
-token con el que se elevan las tarjetas de proyecto, así que no entró ningún valor nuevo.
+La opción activa lleva ahora **borde `trace` y relleno `surface`**, además del color del
+texto. El primer intento fue solo el relleno, y fue insuficiente por la misma razón que el
+color: medido contra el fondo de la cabecera da **1.16** en oscuro y **1.12** en claro, el
+mismo orden de magnitud que el problema que buscaba resolver.
+
+**WCAG 1.4.11 exige 3:1 para lo que identifica el estado de un control**, y ninguna de las
+dos cifras se acerca. El borde sí:
+
+| | Contra el fondo de la cabecera | Contra el relleno del chip |
+|---|---|---|
+| Oscuro `#9fc27c` | **9.33** | 8.07 |
+| Claro `#007c00` | **4.85** | 5.41 |
+
+La lección quedó registrada porque es fácil de repetir: **una pista de forma también hay que
+medirla**. Agregar un fondo apenas perceptible da la sensación de haber resuelto el problema
+sin haberlo resuelto.
+
+El par borde + relleno además coincide con los otros dos usos de `surface` en el proyecto:
+las tarjetas de proyecto lo acompañan con `border-line` y el enlace de salto con
+`border-trace`. Ninguna superficie de este sistema flota sin borde.
 
 ### Qué se descartó
 
