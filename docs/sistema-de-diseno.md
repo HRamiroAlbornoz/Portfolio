@@ -452,6 +452,82 @@ medios: el tamaño crece con el ancho de la ventana pero nunca sale de sus lími
 
 ---
 
+## Cabecera
+
+La cabecera mostraba las iniciales **"HRA"**, que no significan nada para quien entra por
+primera vez. En un portfolio el nombre es lo que hay que recordar al cerrar la pestaña, así
+que pasó a mostrarlo.
+
+### El presupuesto de 272 px
+
+A 320 px la cabecera tiene 272 px útiles, y antes del cambio se repartían así:
+
+| Elemento | Ancho | Porción |
+|---|---|---|
+| Logo "HRA" | 28 px | 10 % |
+| Control de tema | 220 px | **81 %** |
+
+Un control secundario ocupaba cuatro veces más que la identidad. **Por eso poner el nombre y
+condensar el control son el mismo cambio y no dos.** Anchos medidos en el navegador con las
+fuentes ya cargadas, en JetBrains Mono 12 px con tracking 0.18em:
+
+| Texto | Ancho | Holgura con 3 controles de 44 px |
+|---|---|---|
+| Hernán Ramiro Albornoz | 224 px | −92 px |
+| Hernán Albornoz | 153 px | −21 px |
+| **Hernán** | **61 px** | **+71 px** |
+
+De ahí sale la regla: **"Hernán Albornoz" desde 640 px, "Hernán" por debajo**. El nombre
+completo ya aparece en la portada y en la imagen de previsualización, así que la cabecera no
+necesita repetirlo entero.
+
+Los íconos del control siguen la misma lógica invertida: **solo existen por debajo de 640 px**,
+porque resuelven un problema de espacio que en escritorio no ocurre. Arriba de ese ancho hay
+lugar para las palabras, y "Claro" es más claro que un sol. Son de trazo y no macizos, a
+diferencia de los logos del stack: la traza, el riel y los bordes son líneas finas, y un
+ícono de línea pertenece a ese idioma.
+
+El texto de cada opción **nunca sale del DOM**: `sr-only` lo esconde a la vista pero lo deja
+en el árbol de accesibilidad, así que el nombre de cada control es el mismo en los dos
+anchos aunque en móvil solo se vea un dibujo.
+
+### El espacio que desaparecía
+
+El apellido se agrega con `&nbsp;` y no con un espacio común. La primera versión mostraba
+"HernánAlbornoz", todo junto, con el espacio presente en el código fuente.
+
+La causa es que el enlace es un `inline-flex`: en un contenedor flex **cada hijo es un ítem
+independiente, y el espacio en blanco al comienzo de un ítem se descarta**. El espacio caía
+justo en esa frontera. Un espacio de no separación no es colapsable, así que sobrevive — y
+de paso impide que el nombre se parta en dos renglones dentro de una altura fija.
+
+### La opción activa no puede distinguirse solo por color
+
+El control marcaba la opción elegida cambiándole el color a `trace`. Medida la separación de
+luminancia contra `muted`, el color resultó ser una pista insuficiente:
+
+| Tema | Activa vs inactiva | Relación de luminancia |
+|---|---|---|
+| Claro | `#007c00` vs `#6b6157` | **1.12** |
+| Oscuro | `#9fc27c` vs `#a39c92` | **1.36** |
+
+Una relación de 1.0 es "misma claridad". Con 1.12, quien no distingue el rojo del verde ve
+los tres textos idénticos y no puede saber qué tema está puesto. El problema existía desde
+antes, pero al quitar el texto en móvil el color quedaba como **única** pista.
+
+La opción activa lleva ahora fondo `surface` además del color. Un fondo es una diferencia de
+forma, no de tono, así que sobrevive a cualquier tipo de daltonismo; y `surface` es el mismo
+token con el que se elevan las tarjetas de proyecto, así que no entró ningún valor nuevo.
+
+### Qué se descartó
+
+Un logotipo con corchetes angulares, del estilo `< Nombre / >`. Es el logo más repetido de
+los portfolios de desarrollo, pero la objeción de fondo es otra: los corchetes son
+vocabulario de **HTML** y la dirección visual del sitio es una **traza** con nodos y estados.
+Meter una segunda metáfora en el lugar más visible de la página debilita la primera.
+
+---
+
 ## Movimiento
 
 Un solo momento orquestado al cargar la página: la traza baja y el hero aparece en
@@ -482,5 +558,7 @@ buscaba evitar.
 - `pending` marca señales de segundo orden y nunca contenido principal: los estados "sin
   desplegar" y `404`, y los metadatos de proyectos y formación.
 - Todo color nuevo se mide antes de entrar al sistema.
+- **Ningún estado se comunica solo con color.** Todo cambio de estado lleva además una
+  diferencia de forma —fondo, borde, subrayado— que sobreviva al daltonismo.
 - El foco de teclado nunca se desactiva. `:focus-visible` está definido globalmente en
   `globals.css` y solo aparece para quien navega con teclado.
