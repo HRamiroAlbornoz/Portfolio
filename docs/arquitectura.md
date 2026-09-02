@@ -276,38 +276,6 @@ casi nunca cambian.
 Eran cinco hasta que la línea divisoria del pie desapareció, y con ella el único uso de
 `line`.
 
-### La URL de la imagen se invalida con el archivo, no con el contenido
-
-Next.js agrega a la URL de la previsualización un hash **calculado sobre el contenido del
-archivo** `opengraph-image.tsx`. Es la manera de que las cachés externas se enteren de que
-la imagen cambió.
-
-El problema es que ese archivo **lee** de [`site.ts`](../src/content/site.ts) y el hash no
-mira las importaciones. Al cambiar el rol y la frase de presentación, la imagen cambió y la
-URL siguió siendo `?882e14b702883b65`. LinkedIn releyó el HTML —el título se actualizó— y
-siguió mostrando la imagen vieja, porque para su caché la dirección era la misma.
-
-**Regla práctica: al cambiar contenido que aparece en la previsualización, hay que tocar
-también `opengraph-image.tsx`.** Cualquier cambio real sirve; en este caso fueron los
-tamaños de letra del pie.
-
-### Los tamaños son para el tamaño en que se ve, no para el lienzo
-
-La imagen se diseña sobre 1200 × 630 px, pero LinkedIn la muestra a unos 540 px de ancho:
-menos de la mitad. Todo texto se reduce al 45 %, y lo que en el lienzo parece cómodo puede
-ser ilegible donde la imagen realmente se consume.
-
-El pie estaba en 20 px, o sea **9 px** en la tarjeta: una mancha gris. Y era la línea que
-dice "disponible para trabajar en remoto", probablemente el dato más accionable de toda la
-pieza. Pasó a 26 px —12 px en la tarjeta— y el rol de 25 a 30.
-
-Para que el pie más grande entrara, sus dos partes se apilaron en lugar de compartir una
-línea con una rayita en el medio: a 20 px ya ocupaba 964 px de los 970 disponibles, así que
-no había un solo pixel para crecer. La rayita no se extraña, porque medía 1 px de alto y a
-la escala de LinkedIn desaparecía de todos modos.
-
-**Cualquier cambio de tipografía en esta imagen se verifica a 540 px de ancho, no a 1200.**
-
 La imagen usa siempre el tema oscuro. Una previsualización no tiene forma de conocer la
 preferencia de quien la mira, y el oscuro es la identidad del sitio.
 
@@ -334,6 +302,44 @@ leerlo en cada invocación sería trabajo repetido.
 
 Como la ruta se prerenderiza, `assets/` solo hace falta **durante el build**. No es una
 dependencia de tiempo de ejecución y no necesita entrar en el paquete del servidor.
+
+### La URL de la imagen se invalida con el archivo, no con el contenido
+
+Esto ya no es una restricción de Satori sino del cargador de metadatos de Next.js, y
+conviene conocerlo porque no se manifiesta como un error.
+
+Next.js agrega a la URL de la previsualización un hash **calculado sobre el contenido del
+archivo** `opengraph-image.tsx`. Es la manera de que las cachés externas se enteren de que
+la imagen cambió.
+
+El problema es que ese archivo **lee** de [`site.ts`](../src/content/site.ts) y el hash no
+mira las importaciones. Al cambiar el rol y la frase de presentación, la imagen cambió y la
+URL siguió siendo `?882e14b702883b65`. LinkedIn releyó el HTML —el título se actualizó— y
+siguió mostrando la imagen vieja, porque para su caché la dirección era la misma.
+
+**Regla práctica: al cambiar contenido que aparece en la previsualización, hay que tocar
+también `opengraph-image.tsx`.** Cualquier cambio real sirve; en este caso fueron los
+tamaños de letra del pie.
+
+### Los tamaños son para el tamaño en que se ve, no para el lienzo
+
+Tampoco es una restricción técnica: es una regla de diseño que solo se descubre mirando la
+pieza donde se consume.
+
+La imagen se dibuja sobre 1200 × 630 px, pero LinkedIn la muestra a unos 540 px de ancho:
+menos de la mitad. Todo texto se reduce al 45 %, y lo que en el lienzo parece cómodo puede
+ser ilegible en la tarjeta.
+
+El pie estaba en 20 px, o sea **9 px** en la tarjeta: una mancha gris. Y era la línea que
+dice "disponible para trabajar en remoto", probablemente el dato más accionable de toda la
+pieza. Pasó a 26 px —12 px en la tarjeta— y el rol de 25 a 30.
+
+Para que el pie más grande entrara, sus dos partes se apilaron en lugar de compartir una
+línea con una rayita en el medio: a 20 px ya ocupaba 964 px de los 970 disponibles, así que
+no había un solo pixel para crecer. La rayita no se extraña, porque medía 1 px de alto y a
+la escala de LinkedIn desaparecía de todos modos.
+
+**Cualquier cambio de tipografía en esta imagen se verifica a 540 px de ancho, no a 1200.**
 
 ### Presupuesto
 
