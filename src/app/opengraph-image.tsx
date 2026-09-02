@@ -10,7 +10,6 @@ export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 const INK = "#14120f";
-const LINE = "#3a3630";
 const MUTED = "#a39c92";
 const FORE = "#f2efea";
 const TRACE = "#9fc27c";
@@ -86,7 +85,7 @@ export default function OpengraphImage() {
             style={{
               display: "flex",
               fontFamily: "JetBrains Mono",
-              fontSize: 25,
+              fontSize: 30,
               letterSpacing: "0.18em",
               color: TRACE,
             }}
@@ -126,9 +125,9 @@ export default function OpengraphImage() {
           <div
             style={{
               display: "flex",
-              alignItems: "center",
+              flexDirection: "column",
               fontFamily: "JetBrains Mono",
-              fontSize: 20,
+              fontSize: 26,
               letterSpacing: "0.08em",
               color: MUTED,
             }}
@@ -136,16 +135,9 @@ export default function OpengraphImage() {
             <div style={{ display: "flex" }}>
               {site.availability.toUpperCase()}
             </div>
-            <div
-              style={{
-                display: "flex",
-                width: 28,
-                height: 1,
-                margin: "0 20px",
-                backgroundColor: LINE,
-              }}
-            />
-            <div style={{ display: "flex" }}>{site.location.toUpperCase()}</div>
+            <div style={{ display: "flex", marginTop: 14 }}>
+              {site.location.toUpperCase()}
+            </div>
           </div>
         </div>
       </div>
