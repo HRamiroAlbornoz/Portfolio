@@ -1,8 +1,8 @@
 # Portfolio — Hernán Ramiro Albornoz
 
-Portfolio personal de un desarrollador Full Stack con foco en backend. Sitio de una sola
-página, en español, sin dependencias de servidor: todo se prerenderiza durante el build y
-se sirve como archivos estáticos.
+Portfolio personal de un desarrollador Full Stack. Sitio de una sola página, en español,
+sin dependencias de servidor: todo se prerenderiza durante el build y se sirve como
+archivos estáticos.
 
 **Sitio en producción:** <https://hernan-albornoz.vercel.app>
 
