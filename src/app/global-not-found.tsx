@@ -1,14 +1,13 @@
 import type { Metadata } from "next";
 import { Archivo, Instrument_Sans, JetBrains_Mono } from "next/font/google";
+import Link from "next/link";
 
 import { SiteFooter } from "@/components/layout/SiteFooter";
-import { SkipLink } from "@/components/layout/SkipLink";
 import { SiteHeader } from "@/components/layout/SiteHeader";
-import { site } from "@/content/site";
+import { SkipLink } from "@/components/layout/SkipLink";
+import { ThemeScript } from "@/components/layout/ThemeScript";
 import { ui } from "@/content/ui";
-import { env } from "@/lib/env";
 import { DEFAULT_THEME_PREFERENCE } from "@/lib/theme";
-import { themeInitScript } from "@/lib/theme-script";
 import "./globals.css";
 
 const archivo = Archivo({
@@ -36,28 +35,11 @@ const fontVariables = [
 ].join(" ");
 
 export const metadata: Metadata = {
-  metadataBase: new URL(env.siteUrl),
-  title: {
-    default: `${site.name} — ${site.role}`,
-    template: `%s — ${site.name}`,
-  },
-  description: site.tagline,
-  openGraph: {
-    type: "website",
-    locale: "es_AR",
-    url: "/",
-    siteName: site.name,
-    title: `${site.name} — ${site.role}`,
-    description: site.tagline,
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: `${site.name} — ${site.role}`,
-    description: site.tagline,
-  },
+  title: ui.notFound.title,
+  robots: { index: false, follow: false },
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function GlobalNotFound() {
   return (
     <html
       lang="es"
@@ -66,12 +48,37 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${fontVariables} h-full antialiased`}
     >
       <head>
-        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+        <ThemeScript />
       </head>
       <body className="flex min-h-full flex-col bg-ink text-fore">
         <SkipLink label={ui.navigation.skipLabel} targetId="main-content" />
         <SiteHeader />
-        {children}
+
+        <main
+          className="mx-auto flex w-full max-w-3xl flex-1 flex-col justify-center gap-6 px-6 py-24 focus-visible:outline-none"
+          id="main-content"
+          tabIndex={-1}
+        >
+          <p className="font-mono text-eyebrow uppercase text-pending">
+            {ui.notFound.code}
+          </p>
+
+          <h1 className="font-display text-title text-fore">
+            {ui.notFound.title}
+          </h1>
+
+          <p className="max-w-prose text-body text-muted">
+            {ui.notFound.description}
+          </p>
+
+          <Link
+            className="inline-flex min-h-11 items-center self-start font-mono text-eyebrow uppercase text-trace underline underline-offset-4"
+            href="/"
+          >
+            {ui.notFound.homeLabel}
+          </Link>
+        </main>
+
         <SiteFooter />
       </body>
     </html>
