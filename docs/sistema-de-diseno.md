@@ -195,8 +195,9 @@ Se descartó agregar un cálido ajeno —terracota, arena— justamente por eso:
 color sin relación con el tema del sitio.
 
 Los neutros giraron de azul a cálido: en `#14120f` el canal rojo pasa a ser el más alto. Es
-el mismo negro profundo, con temperatura. **La menta se conservó sin cambios**: fondo cálido
-con acento frío contrasta mejor que un esquema todo cálido, y mantiene la identidad técnica.
+el mismo negro profundo, con temperatura. **La menta se conservó en este paso**, con el
+argumento de que un fondo cálido con acento frío contrasta mejor que un esquema todo cálido.
+No sobrevivió a la página terminada: ver «El acento pasó de menta a verde», más arriba.
 
 ### Por qué `surface` tuvo que alejarse de `ink`
 
@@ -224,6 +225,32 @@ más oscuro, dio **4.41**: por debajo del 4.5 que exige AA para texto normal. Se
 Es el segundo color de este sistema que la medición corrige antes de llegar a producción. La
 regla se sostiene: **ningún color entra sin medirse, y cambiar el fondo obliga a volver a
 medir todo lo que se apoya en él.**
+
+### Por qué los logos del stack son monocromos
+
+Cada tecnología de la sección Stack lleva su logo real, dibujado como un path de Simple Icons
+en [`icons.ts`](../src/lib/icons.ts) y pintado con `fill-current`, así que toma el color del
+texto que acompaña.
+
+Se evaluó pasarlos al color de marca, como hacen muchos portfolios. Se descartó por dos
+razones, ninguna estética.
+
+**Cinco de los veinte logos son negros en su color oficial**: Next.js y Vercel y Express
+`#000000`, GitHub `#181717`, Railway `#0B0D0E`. Sobre `ink` desaparecen. El resultado no
+sería "los logos con su color": serían quince logos con su color y cinco con un color
+inventado, que es justamente lo que la opción prometía evitar.
+
+**Y son veinte.** Veinte colores de marca en cuatro capas son veinte acentos compitiendo
+contra una paleta de siete valores, y quedarían como lo más fuerte de la página — por encima
+del nombre en la portada.
+
+Lo que sí se corrigió fue el tamaño: pasaron de **13 px a 16 px**. A 13 px, junto a un cuerpo
+de 17 px, el logo se leía como viñeta y no se llegaba a reconocer. A 16 px se reconoce sin
+tocar la paleta ni la disposición.
+
+Las cuatro entradas sin logo —APIs REST, SQL, Supertest, Git Flow— llevan un círculo hueco
+del mismo tamaño. Al crecer se nota más, y conviene: el círculo hueco ya significa "todavía
+no" en los nodos del riel de la traza.
 
 ---
 
@@ -405,15 +432,20 @@ aparezcan en el contenido.
 
 ### Escala
 
-Cuatro tamaños con nombre. Cada uno arrastra su propio interlineado, espaciado y peso,
+Cinco tamaños con nombre. Cada uno arrastra su propio interlineado, espaciado y peso,
 así que es imposible usar un tamaño y equivocarse en el resto.
 
 | Clase | Tamaño | Interlineado | Espaciado | Peso |
 |---|---|---|---|---|
 | `text-display` | `clamp(3rem, 12vw, 8.5rem)` | 0.92 | -0.035em | 700 |
 | `text-title` | `clamp(1.75rem, 4vw, 2.75rem)` | 1.15 | -0.02em | 600 |
+| `text-subtitle` | `clamp(1.375rem, 2.5vw, 1.75rem)` | 1.2 | -0.015em | 600 |
 | `text-body` | `1.0625rem` | 1.7 | — | — |
 | `text-eyebrow` | `0.75rem` | 1 | 0.18em | 500 |
+
+`text-subtitle` se agregó con el rediseño cálido. Antes, el título de una sección y el
+nombre de un proyecto usaban los dos `text-title`: la jerarquía era plana y todo pesaba
+igual. El escalón intermedio es lo que separa "Proyectos" de "NexoPay".
 
 `clamp(mínimo, preferido, máximo)` produce tipografía fluida sin una sola consulta de
 medios: el tamaño crece con el ancho de la ventana pero nunca sale de sus límites.
@@ -445,10 +477,10 @@ buscaba evitar.
 
 - Ningún componente escribe un color hexadecimal. Se usan las clases de token
   (`bg-ink`, `text-fore`, `border-line`).
-- Ningún componente escribe un tamaño de letra arbitrario. Se usan los cuatro nombres de
+- Ningún componente escribe un tamaño de letra arbitrario. Se usan los cinco nombres de
   la escala.
-- `pending` es exclusivo del estado "sin desplegar". Si aparece en otro lado, pierde su
-  significado.
+- `pending` marca señales de segundo orden y nunca contenido principal: los estados "sin
+  desplegar" y `404`, y los metadatos de proyectos y formación.
 - Todo color nuevo se mide antes de entrar al sistema.
 - El foco de teclado nunca se desactiva. `:focus-visible` está definido globalmente en
   `globals.css` y solo aparece para quien navega con teclado.

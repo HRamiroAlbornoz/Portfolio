@@ -1,6 +1,6 @@
 import { TECHNOLOGY_ICONS } from "@/lib/icons";
 
-const ICON_SIZE_CLASS = "size-[0.8125rem] shrink-0";
+const ICON_SIZE_CLASS = "size-4 shrink-0";
 
 type TechnologyIconProps = {
   name: string | undefined;
