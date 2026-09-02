@@ -4,8 +4,8 @@ import { uiSchema } from "@/lib/schemas";
 
 export const ui = uiSchema.parse({
   navigation: {
-    railLabel: "Secciones del sitio",
-    skipLabel: "Saltar al contenido",
+    railLabel: "Site sections",
+    skipLabel: "Skip to content",
   },
   language: {
     code: "es",
@@ -14,27 +14,27 @@ export const ui = uiSchema.parse({
   },
   notFound: {
     code: "Error 404",
-    title: "Esta página no existe",
+    title: "This page does not exist",
     description:
-      "El enlace que seguiste apunta a una dirección que no está en este sitio. Puede que se haya escrito mal, o que el contenido ya no esté acá.",
-    homeLabel: "Volver al inicio",
+      "The link you followed points to an address that is not on this site. It may have been mistyped, or the content may no longer be here.",
+    homeLabel: "Back to home",
   },
   footer: {
     note: "Next.js · TypeScript · Tailwind CSS",
-    sourceLabel: "Código de este sitio",
+    sourceLabel: "Source code of this site",
     sourceUrl: "https://github.com/HRamiroAlbornoz/Portfolio",
   },
   projects: {
-    empty: "Todavía sin desplegar",
-    live: "Ver en vivo",
-    repository: "Código",
+    empty: "Not deployed yet",
+    live: "View live",
+    repository: "Code",
   },
   theme: {
-    groupLabel: "Tema",
+    groupLabel: "Theme",
     options: {
       system: "Auto",
-      light: "Claro",
-      dark: "Oscuro",
+      light: "Light",
+      dark: "Dark",
     },
   },
 } satisfies z.input<typeof uiSchema>);

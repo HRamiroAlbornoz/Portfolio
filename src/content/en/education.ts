@@ -6,12 +6,12 @@ export const education = educationSchema.parse([
   {
     title: "Full Stack Web Developer",
     institution: "Henry",
-    period: "Febrero 2026 — Junio 2026",
+    period: "February 2026 — June 2026",
     summary:
-      "Bootcamp intensivo full-time de desarrollo web: JavaScript, TypeScript, React, Node.js, Express, PostgreSQL, testing automatizado y trabajo en equipo con metodologías ágiles.",
+      "Intensive full-time web development bootcamp: JavaScript, TypeScript, React, Node.js, Express, PostgreSQL, automated testing and teamwork with agile methodologies.",
     highlights: [
-      "Certificación Full Stack 3.0, emitida el 19 de junio de 2026",
-      "Proyecto final: NEXOPAY, billetera digital multimoneda construida en equipo de 3",
+      "Full Stack 3.0 certification, issued on 19 June 2026",
+      "Final project: NEXOPAY, a multi-currency digital wallet built in a team of 3",
     ],
   },
 ] satisfies z.input<typeof educationSchema>);

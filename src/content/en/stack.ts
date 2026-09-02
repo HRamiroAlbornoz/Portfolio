@@ -5,7 +5,7 @@ import { stackSchema } from "@/lib/schemas";
 export const stack = stackSchema.parse([
   {
     id: "interface",
-    label: "Interfaz",
+    label: "Interface",
     items: [
       { name: "HTML", icon: "html5" },
       { name: "CSS", icon: "css" },
@@ -18,11 +18,11 @@ export const stack = stackSchema.parse([
   },
   {
     id: "logic",
-    label: "Lógica",
+    label: "Logic",
     items: [
       { name: "Node.js", icon: "nodedotjs" },
       { name: "Express", icon: "express" },
-      { name: "APIs REST" },
+      { name: "REST APIs" },
       { name: "JWT", icon: "jsonwebtokens" },
       { name: "Zod", icon: "zod" },
       { name: "MCP", icon: "modelcontextprotocol" },
@@ -30,7 +30,7 @@ export const stack = stackSchema.parse([
   },
   {
     id: "data",
-    label: "Datos",
+    label: "Data",
     items: [
       { name: "PostgreSQL", icon: "postgresql" },
       { name: "SQL" },
@@ -39,7 +39,7 @@ export const stack = stackSchema.parse([
   },
   {
     id: "tooling",
-    label: "Calidad y herramientas",
+    label: "Quality and tooling",
     items: [
       { name: "Vitest", icon: "vitest" },
       { name: "Supertest" },
