@@ -23,32 +23,19 @@ function readScrollProgress(): number {
   return Math.min(1, Math.max(0, window.scrollY / scrollable));
 }
 
-function readHeaderHeight(): number {
-  return document.querySelector("header")?.getBoundingClientRect().height ?? 0;
+function readPixels(value: string): number {
+  const pixels = Number.parseFloat(value);
+
+  return Number.isNaN(pixels) ? 0 : pixels;
 }
 
-function readArrivalLine(element: Element, headerHeight: number): number {
-  const scrollMargin = Number.parseFloat(
-    window.getComputedStyle(element).scrollMarginTop,
-  );
-
-  return (
-    headerHeight +
-    (Number.isNaN(scrollMargin) ? 0 : scrollMargin) +
-    ARRIVAL_TOLERANCE
-  );
-}
-
-function findCurrentSection(
+function measureArrivalLines(
   sections: readonly Section[],
-  progress: number,
-): SectionId | null {
-  if (progress >= BOTTOM_PROGRESS_THRESHOLD) {
-    return sections[sections.length - 1]?.id ?? null;
-  }
-
-  const headerHeight = readHeaderHeight();
-  let current: SectionId | null = null;
+): Map<SectionId, number> {
+  const scrollPadding = readPixels(
+    window.getComputedStyle(document.documentElement).scrollPaddingTop,
+  );
+  const lines = new Map<SectionId, number>();
 
   for (const section of sections) {
     const element = document.getElementById(section.id);
@@ -57,9 +44,38 @@ function findCurrentSection(
       continue;
     }
 
+    const scrollMargin = readPixels(
+      window.getComputedStyle(element).scrollMarginTop,
+    );
+
+    lines.set(section.id, scrollPadding + scrollMargin + ARRIVAL_TOLERANCE);
+  }
+
+  return lines;
+}
+
+function findCurrentSection(
+  sections: readonly Section[],
+  arrivalLines: Map<SectionId, number>,
+  progress: number,
+): SectionId | null {
+  if (progress >= BOTTOM_PROGRESS_THRESHOLD) {
+    return sections[sections.length - 1]?.id ?? null;
+  }
+
+  let current: SectionId | null = null;
+
+  for (const section of sections) {
+    const element = document.getElementById(section.id);
+    const arrivalLine = arrivalLines.get(section.id);
+
+    if (element === null || arrivalLine === undefined) {
+      continue;
+    }
+
     const box = element.getBoundingClientRect();
 
-    if (box.height > 0 && box.top <= readArrivalLine(element, headerHeight)) {
+    if (box.height > 0 && box.top <= arrivalLine) {
       current = section.id;
     }
   }
@@ -80,9 +96,11 @@ export function TraceRail({ label, sections }: TraceRailProps) {
 
     let frame = 0;
     let isRailVisible = false;
+    let arrivalLines = new Map<SectionId, number>();
 
-    const refreshVisibility = () => {
+    const refreshMeasurements = () => {
       isRailVisible = window.getComputedStyle(rail).display !== "none";
+      arrivalLines = measureArrivalLines(sections);
     };
 
     const paint = () => {
@@ -93,7 +111,7 @@ export function TraceRail({ label, sections }: TraceRailProps) {
       }
 
       const progress = readScrollProgress();
-      const active = findCurrentSection(sections, progress);
+      const active = findCurrentSection(sections, arrivalLines, progress);
 
       rail.style.setProperty(SCROLL_PROGRESS_PROPERTY, progress.toFixed(4));
       setActiveId(active);
@@ -106,11 +124,11 @@ export function TraceRail({ label, sections }: TraceRailProps) {
     };
 
     const handleResize = () => {
-      refreshVisibility();
+      refreshMeasurements();
       schedulePaint();
     };
 
-    refreshVisibility();
+    refreshMeasurements();
     paint();
 
     window.addEventListener("scroll", schedulePaint, { passive: true });
