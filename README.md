@@ -1,10 +1,13 @@
 # Portfolio — Hernán Ramiro Albornoz
 
-Portfolio personal de un desarrollador Full Stack. Sitio de una sola página, en español,
+Portfolio personal de un desarrollador Full Stack. Sitio de una sola página en dos idiomas,
 sin dependencias de servidor: todo se prerenderiza durante el build y se sirve como
 archivos estáticos.
 
-**Sitio en producción:** <https://hernan-albornoz.vercel.app>
+**Sitio en producción:**
+
+- Español: <https://hernan-albornoz.vercel.app>
+- English: <https://hernan-albornoz.vercel.app/en>
 
 ---
 
@@ -126,7 +129,8 @@ trabajo, y todo porqué no evidente vive acá.
 
 Es editar un archivo de datos, no escribir código:
 
-1. Agregá un objeto a [`src/content/projects.ts`](./src/content/projects.ts).
+1. Agregá el mismo objeto a [`src/content/es/projects.ts`](./src/content/es/projects.ts) y a
+   [`src/content/en/projects.ts`](./src/content/en/projects.ts), con idéntico `slug`.
 2. Corré `npm run build`.
 
 Si falta un campo o una URL está mal escrita, **el build falla y dice exactamente qué**.

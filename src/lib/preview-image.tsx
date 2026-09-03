@@ -1,13 +1,14 @@
+import "server-only";
+
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
 import { ImageResponse } from "next/og";
 
-import { site } from "@/content/site";
+import type { Site } from "@/lib/schemas";
 
-export const alt = `${site.name} — ${site.role}`;
-export const size = { width: 1200, height: 630 };
-export const contentType = "image/png";
+export const PREVIEW_SIZE = { width: 1200, height: 630 };
+export const PREVIEW_CONTENT_TYPE = "image/png";
 
 const INK = "#14120f";
 const MUTED = "#a39c92";
@@ -40,7 +41,7 @@ function TraceNode() {
   );
 }
 
-export default function OpengraphImage() {
+export function renderPreviewImage(site: Site): ImageResponse {
   return new ImageResponse(
     (
       <div
@@ -143,7 +144,7 @@ export default function OpengraphImage() {
       </div>
     ),
     {
-      ...size,
+      ...PREVIEW_SIZE,
       fonts: [
         {
           name: "Archivo",
