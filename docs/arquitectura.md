@@ -201,13 +201,57 @@ La primera versión usaba `IntersectionObserver` y tenía un defecto: solo actua
 cuando una sección **entraba** en la franja central. Al salir todas —arriba del todo, o al
 final de la página— nunca se limpiaba y quedaba pegada la última.
 
-La versión actual recorre las secciones y elige la última cuyo borde superior ya pasó la
-línea media de lectura. Es determinista: da el mismo resultado para la misma posición de
+La versión actual recorre las secciones y elige la última cuyo borde superior ya pasó una
+línea de referencia. Es determinista: da el mismo resultado para la misma posición de
 scroll, sin importar cómo se llegó ahí.
 
-Caso especial: la última sección es corta y su borde superior nunca alcanza la línea media
-porque la página deja de desplazarse antes. Por eso, al llegar al final, se marca
-directamente la última.
+Caso especial: la última sección es corta y su borde superior nunca alcanza la línea porque
+la página deja de desplazarse antes. Por eso, al llegar al final, se marca directamente la
+última.
+
+### La línea de referencia está donde aterrizan los clics, no a media pantalla
+
+Estuvo a la mitad de la ventana y **hacía que el riel encendiera la sección equivocada al
+hacer clic**. Al tocar "Formación" se encendía "Contacto"; al tocar "Sobre mí", "Stack".
+
+La causa: hay secciones más cortas que media pantalla —Formación mide 284 px— y al llevar
+una sección corta arriba del todo, la **siguiente** ya cruzó la mitad. Ninguna sección corta
+podía ser la del medio en el momento en que se hacía clic en ella.
+
+Ahora la línea está donde el navegador deposita el destino de un enlace interno: la altura
+de la cabecera más el `scroll-margin-top` de la propia sección. Ese margen **se lee de cada
+sección** en vez de suponerse; hoy todas usan `scroll-mt-8`, pero si una cambiara, el cálculo
+la sigue. Suponerlo fue el primer intento y encendía la sección **anterior**, con el error
+justo del tamaño de ese margen.
+
+Efecto secundario que conviene conocer: arriba del todo no se enciende ninguna, porque
+ninguna sección cruzó todavía la línea. Es correcto — ahí se está mirando la portada.
+
+### La última sección reserva media pantalla
+
+Corregir la línea no alcanzaba. Al hacer clic en "Formación" la página **se topaba con el
+final del documento** antes de llevar la sección a su lugar, y ahí se disparaba el caso
+especial del final y se encendía "Contacto".
+
+Cuando la ventana es más alta que el contenido que queda por debajo, ninguna regla basada en
+la posición del scroll puede saber qué sección se está mirando: hacer clic en la anteúltima y
+en la última dejan la página en la **misma** posición. Lo que falta no es lógica sino
+recorrido.
+
+Por eso `globals.css` le da a la última sección `min-height: 50vh`. No es un parche sobre el
+síntoma: es lo que le da al documento el recorrido que le faltaba.
+
+**El techo, medido:** funciona hasta ventanas de unos **1400 px de alto**. Por encima, el
+defecto vuelve. Se eligió el 50 % y no un valor mayor porque el espacio en blanco lo paga
+todo el mundo en cada visita, mientras que el defecto restante es cosmético —un nodo que se
+enciende corrido— y solo aparece en monitores 1440p o 4K maximizados.
+
+**La regla está acotada a 1024 px de ancho**, exactamente el mismo umbral con el que aparece
+el riel. Donde no hay riel no hay espacio reservado: en teléfono la sección de contacto
+conserva su alto natural de 184 px. Verificado a 375, 1023 y 1024 px.
+
+Si algún día el contenido de esa sección crece, conviene volver a medir: parte de la reserva
+puede volverse innecesaria.
 
 ### Vive en la página, no en el layout
 

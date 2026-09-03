@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import type { Section, SectionId } from "@/lib/schemas";
 
 const SCROLL_PROGRESS_PROPERTY = "--trace-progress";
-const READING_LINE_RATIO = 0.5;
+const ARRIVAL_TOLERANCE = 4;
 const BOTTOM_PROGRESS_THRESHOLD = 0.999;
 
 type TraceRailProps = {
@@ -23,7 +23,23 @@ function readScrollProgress(): number {
   return Math.min(1, Math.max(0, window.scrollY / scrollable));
 }
 
-function findSectionAtReadingLine(
+function readHeaderHeight(): number {
+  return document.querySelector("header")?.getBoundingClientRect().height ?? 0;
+}
+
+function readArrivalLine(element: Element, headerHeight: number): number {
+  const scrollMargin = Number.parseFloat(
+    window.getComputedStyle(element).scrollMarginTop,
+  );
+
+  return (
+    headerHeight +
+    (Number.isNaN(scrollMargin) ? 0 : scrollMargin) +
+    ARRIVAL_TOLERANCE
+  );
+}
+
+function findCurrentSection(
   sections: readonly Section[],
   progress: number,
 ): SectionId | null {
@@ -31,7 +47,7 @@ function findSectionAtReadingLine(
     return sections[sections.length - 1]?.id ?? null;
   }
 
-  const readingLine = window.innerHeight * READING_LINE_RATIO;
+  const headerHeight = readHeaderHeight();
   let current: SectionId | null = null;
 
   for (const section of sections) {
@@ -43,7 +59,7 @@ function findSectionAtReadingLine(
 
     const box = element.getBoundingClientRect();
 
-    if (box.height > 0 && box.top <= readingLine) {
+    if (box.height > 0 && box.top <= readArrivalLine(element, headerHeight)) {
       current = section.id;
     }
   }
@@ -77,7 +93,7 @@ export function TraceRail({ label, sections }: TraceRailProps) {
       }
 
       const progress = readScrollProgress();
-      const active = findSectionAtReadingLine(sections, progress);
+      const active = findCurrentSection(sections, progress);
 
       rail.style.setProperty(SCROLL_PROGRESS_PROPERTY, progress.toFixed(4));
       setActiveId(active);
