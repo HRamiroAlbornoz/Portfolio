@@ -68,7 +68,7 @@ profundo sobre fondo claro— porque un mismo valor no puede tener contraste suf
 contra dos fondos opuestos.
 
 > **Hay una excepción, y está fuera del CSS.** La imagen de previsualización
-> ([`opengraph-image.tsx`](../src/app/opengraph-image.tsx)) repite cuatro valores de la
+> ([`preview-image.tsx`](../src/lib/preview-image.tsx)) repite cuatro valores de la
 > paleta oscura como constantes de TypeScript, porque la dibuja Satori, que no ejecuta
 > CSS y no puede leer variables. **Si cambiás un color del tema oscuro, cambialo también
 > ahí.** El razonamiento completo está en
@@ -184,7 +184,7 @@ pertenece al vocabulario del sitio en lugar de importarse.
 **El token pasó a tener dos usos, y conviene ser explícito al respecto.** Sigue marcando
 esos dos estados —el vacío de Proyectos vive en
 [`ProjectsSection.tsx`](../src/components/sections/ProjectsSection.tsx) aunque hoy no se vea,
-y el `404` en [`not-found.tsx`](../src/app/not-found.tsx)— y ahora además marca los metadatos
+y el `404` en [`global-not-found.tsx`](../src/app/global-not-found.tsx)— y ahora además marca los metadatos
 de proyectos y formación.
 
 Lo que unifica los tres usos es que ninguno es contenido principal: son **señales de segundo
@@ -319,8 +319,9 @@ de la clase y no se aplican sin JavaScript. Por eso el proyecto estiliza con tok
 ### Por qué un script bloqueante y no `useEffect`
 
 El script vive en [`src/lib/theme.ts`](../src/lib/theme.ts) y se inyecta en el `<head>`
-desde [`src/app/layout.tsx`](../src/app/layout.tsx). Corre **durante el análisis del
-HTML**, antes del primer pintado.
+desde [`ThemeScript.tsx`](../src/components/layout/ThemeScript.tsx), que los dos layouts raíz
+y el 404 renderizan dentro de su `<head>`. Corre **durante el análisis del HTML**, antes del
+primer pintado.
 
 `useEffect` corre después de la hidratación y del pintado: la persona vería la página en
 tema claro por un instante antes de que cambie a oscuro. `useLayoutEffect` corre antes
@@ -379,8 +380,9 @@ Como `npm run typecheck` corre en el CI, ese error bloquea el Pull Request.
 
 **ESLint impide que el patrón se propague.** La regla `react/no-danger` está en `error`
 para todo el proyecto, con una excepción declarada en `eslint.config.mjs` acotada
-únicamente a `src/app/layout.tsx`. La excepción vive en la configuración y no como un
-comentario en el código, para que sea visible y revisable en un solo lugar.
+únicamente a `src/components/layout/ThemeScript.tsx`, un archivo de cinco líneas que existe
+solo para contenerla. La excepción vive en la configuración y no como un comentario en el
+código, para que sea visible y revisable en un solo lugar.
 
 #### Sobre la aserción de tipo
 

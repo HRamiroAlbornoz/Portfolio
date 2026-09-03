@@ -21,8 +21,14 @@ git switch -c feature/proyecto-nombre-corto
 
 ### 2. Agregar el objeto
 
-Abrí [`src/content/projects.ts`](../src/content/projects.ts) y sumá un objeto al array.
+Abrí [`src/content/es/projects.ts`](../src/content/es/projects.ts) y sumá un objeto al array.
 Ejemplo completo, con todos los campos:
+
+> **Hay que sumarlo en los dos idiomas.** El mismo objeto va también en
+> [`src/content/en/projects.ts`](../src/content/en/projects.ts), con el mismo `slug`. Si el
+> texto todavía no está traducido, copialo tal cual: los proyectos siguen en español en `/en`
+> a la espera de los proyectos rehechos. Lo que **no** puede diferir es el `slug`: hay una
+> validación cruzada en `src/content/index.ts` que rompe el build si los idiomas no coinciden.
 
 ```ts
 {
@@ -57,7 +63,7 @@ npm run dev
 Si los cuatro pasan y la sección se ve bien en el navegador:
 
 ```bash
-git add src/content/projects.ts
+git add src/content/es/projects.ts src/content/en/projects.ts
 git commit -m "Add gestor-de-turnos project"
 git push -u origin feature/proyecto-nombre-corto
 gh pr create --base main --fill
@@ -139,11 +145,13 @@ ejecutando código. Rompen `npm run build` con el archivo y la línea exactos.
 
 Eso es deliberado: **es preferible que el build falle a que el sitio se publique roto.**
 
-Y hay una condición para que esa segunda red exista: **algún componente tiene que
-importar el archivo de contenido.** Zod valida cuando el módulo se carga, y Next.js solo
-carga lo que es alcanzable desde una página. Si nadie lo importa, el `parse()` nunca
-corre y el archivo es código muerto. Hoy los cinco archivos de `src/content/` los usa
-`src/app/page.tsx`.
+Y hay una condición para que esa segunda red exista: **algún módulo tiene que importar el
+archivo de contenido.** Zod valida cuando el módulo se carga, y Next.js solo carga lo que es
+alcanzable desde una página. Si nadie lo importa, el `parse()` nunca corre y el archivo es
+código muerto.
+
+Eso hoy está resuelto por construcción: `src/content/index.ts` importa los doce archivos de
+las dos carpetas, así que ninguno puede quedar sin evaluar.
 
 ---
 

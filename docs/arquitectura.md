@@ -41,8 +41,37 @@ cambia**. Acá el contenido cambia seguido (textos, proyectos nuevos, un segundo
 la presentación casi nunca. Con esa separación, sumar un proyecto es editar un archivo de
 datos y sumar inglés es duplicar una carpeta.
 
+**Y así fue.** `src/content/es/` y `src/content/en/` tienen los mismos seis archivos, y los
+esquemas de `src/lib/schemas.ts` validan las dos carpetas sin duplicarse.
+
 Se descartó organizar por features (una carpeta por sección con todo adentro): la mayoría
 quedaría con uno o dos archivos y el contenido disperso en seis lugares.
+
+### La puerta única, y por qué existe
+
+`src/content/index.ts` importa los doce archivos y expone `getContent(locale)`. Hace tres
+cosas que no son evidentes:
+
+**Cierra la trampa del `.parse()`.** Como importa todo, ya no puede quedar un archivo de
+contenido sin evaluar. Antes hubo tres.
+
+**Importa `server-only`.** El contenido llama a Zod, y Zod pesa 59 KB medidos en el
+navegador. Ahora, si alguien pusiera `"use client"` en un componente que lo importa, el build
+falla en vez de mandarlo. Es la misma técnica que usa `theme-script.ts`.
+
+**Valida entre idiomas.** Zod valida cada carpeta por separado: nada le impide a `en/` tener
+un proyecto de menos o las secciones en otro orden. `index.ts` es el único lugar donde los
+dos idiomas se encuentran, así que ahí se comparan los `id` de sección, los `id` de capa del
+stack y los `slug` de proyecto. Si no coinciden, el build para con un mensaje que dice qué
+difiere.
+
+Ese chequeo hacía falta porque la deriva era **silenciosa**: `labelFor` cae al `id` crudo si
+falta una etiqueta, así que una sección sin traducir se habría renderizado como `about` en
+lugar de romper nada.
+
+**Ningún componente importa contenido.** Todos lo reciben por props, y quien resuelve el
+idioma es la página o el documento. Eso mantiene la frontera servidor/cliente donde estaba y
+hace que agregar un idioma no toque un solo componente.
 
 ---
 
@@ -182,8 +211,8 @@ directamente la última.
 
 ### Vive en la página, no en el layout
 
-La traza está en [`page.tsx`](../src/app/page.tsx), junto a las secciones que navega. El
-encabezado y el pie sí están en el layout.
+La traza está en [`SiteHome`](../src/components/layout/SiteHome.tsx), junto a las secciones
+que navega. El encabezado y el pie sí están en el documento compartido.
 
 El criterio: **el layout es el marco de todo el sitio; la traza navega las secciones de
 una página concreta.** Estuvo mal ubicada al principio y el efecto se vio en la página de
@@ -239,7 +268,7 @@ rendimiento hiciera falta recortar, ahí hay margen con un sprite SVG.
 
 ## La imagen de previsualización
 
-[`opengraph-image.tsx`](../src/app/opengraph-image.tsx) genera el PNG de 1200x630 que
+[`preview-image.tsx`](../src/lib/preview-image.tsx) genera el PNG de 1200x630 que
 LinkedIn, WhatsApp o Slack muestran cuando alguien comparte el enlace. Next.js lo
 prerenderiza durante el build: en producción es un archivo estático, no se dibuja en
 cada visita.
@@ -312,14 +341,19 @@ Next.js agrega a la URL de la previsualización un hash **calculado sobre el con
 archivo** `opengraph-image.tsx`. Es la manera de que las cachés externas se enteren de que
 la imagen cambió.
 
-El problema es que ese archivo **lee** de [`site.ts`](../src/content/site.ts) y el hash no
-mira las importaciones. Al cambiar el rol y la frase de presentación, la imagen cambió y la
-URL siguió siendo `?882e14b702883b65`. LinkedIn releyó el HTML —el título se actualizó— y
-siguió mostrando la imagen vieja, porque para su caché la dirección era la misma.
+El problema es que ese archivo **lee** el `site.ts` de su idioma y el hash no mira las
+importaciones. Al cambiar el rol y la frase de presentación, la imagen cambió y la URL siguió
+siendo `?882e14b702883b65`. LinkedIn releyó el HTML —el título se actualizó— y siguió
+mostrando la imagen vieja, porque para su caché la dirección era la misma.
 
-**Regla práctica: al cambiar contenido que aparece en la previsualización, hay que tocar
-también `opengraph-image.tsx`.** Cualquier cambio real sirve; en este caso fueron los
-tamaños de letra del pie.
+**Con dos idiomas la trampa es peor**: el dibujo vive en `src/lib/preview-image.tsx` y los
+archivos de ruta son dos, uno por grupo. Un cambio en el módulo compartido no invalida
+**ninguna** de las dos URL.
+
+**Regla práctica: al cambiar el dibujo o el contenido que aparece en la previsualización, hay
+que tocar también los dos archivos de ruta**, `(es)/opengraph-image.tsx` y
+`(en)/en/opengraph-image.tsx`. Cualquier cambio real sirve; la primera vez fueron los tamaños
+de letra del pie.
 
 ### Los tamaños son para el tamaño en que se ve, no para el lienzo
 
@@ -351,9 +385,80 @@ la escala de LinkedIn desaparecía de todos modos.
 No hace falta un `twitter-image.tsx` aparte ni declarar `openGraph.images` en el
 `layout.tsx`. Por la sola presencia del archivo, Next.js emite `og:image` y
 `twitter:image` con su tipo, ancho, alto y texto alternativo. El `alt` sale del `export
-const alt` del propio archivo, y el contenido de la imagen sale de
-[`site.ts`](../src/content/site.ts): el nombre, el rol, la frase y la disponibilidad no
-están escritos dos veces.
+const alt` del propio archivo de ruta, y el contenido de la imagen sale del `site.ts` del
+idioma que corresponda: el nombre, el rol, la frase y la disponibilidad no están escritos
+dos veces.
+
+---
+
+## Dos idiomas, dos layouts raíz
+
+El español vive en `/` y el inglés en `/en`. El idioma nuevo se sumó; el existente no se
+movió, porque esa URL ya estaba impresa en dos CV, compartida en LinkedIn e indexada.
+
+### Por qué grupos de rutas y no `app/[lang]`
+
+`<html lang>` se declara en el layout raíz, y **un layout anidado no puede cambiarlo**. Para
+que `/` sea `lang="es"` y `/en` sea `lang="en"` hacen falta dos layouts raíz, y esta versión
+de Next.js los soporta con grupos de rutas: `src/app/(es)/` y `src/app/(en)/`.
+
+El manual de i18n de Next.js propone `app/[lang]/`, que es el camino más transitado. Se
+descartó porque llevaría el español a `/es` y obligaría a redirigir la raíz.
+
+### El precio: el 404 dejó de componerse solo
+
+Con dos layouts raíz **no hay ninguno desde el cual armar el 404 global**: una URL que no cae
+en ningún grupo no tiene layout que Next pueda elegir. La primera prueba lo confirmó — una
+dirección inventada devolvía la pantalla genérica de Next, en inglés y sin diseño.
+
+Se midieron dos salidas antes de decidir:
+
+| | Ruta comodín | `global-not-found` |
+|---|---|---|
+| Código HTTP | 404 | 404 |
+| `lang` en el HTML del servidor | ausente | **`lang="es"`** |
+| Tema y fuentes en el servidor | ausentes | **presentes** |
+| Se arma con JavaScript | sí | **no** |
+| Ruta | dinámica | **estática** |
+
+La ruta comodín funcionaba pero devolvía `<html id="__next_error__">` vacío y convertía el
+404 en una función de servidor, contradiciendo la decisión fundacional de que todo se
+prerenderiza. Ganó `global-not-found`, con `experimental.globalNotFound` en
+`next.config.ts`.
+
+**Es una API experimental y eso se asume a conciencia.** Si una versión futura la cambia, el
+síntoma es un build que falla con un mensaje claro, no un error silencioso, y la salida es
+volver al comodín, que ya se probó y funciona.
+
+Consecuencia estructural asumida: **hay un solo 404 y se sirve en español**, incluso para una
+URL rota bajo `/en`. Una dirección que no existe no tiene idioma, y el español es el idioma
+por defecto del sitio.
+
+### El documento vive una sola vez
+
+`src/app/_site-document.tsx` contiene `<html>`, `<head>`, `<body>`, la cabecera y el pie, y lo
+usan los dos layouts y el 404. Está **dentro** de `src/app/` a propósito: la regla
+`@next/next/no-head-element` marca `<head>` fuera de ese directorio, donde el patrón correcto
+es `next/head` del Pages Router.
+
+Se intentó sacar el `<head>` para poder alojarlo en `src/components/`. **El script de tema
+quedaba fuera del head**, al inicio del `body` —medido por posición de bytes—, lo que
+reintroduce el parpadeo de tema que el script existe para evitar. Se volvió atrás.
+
+### El selector de idioma
+
+Está en la primera fila de la portada, alineado al pixel bajo el control de tema, y repetido
+en el pie para quien ya bajó. Se descartó ponerlo en la cabecera: a 320 px quedaban 76 px
+libres y un cuarto control los habría consumido, justo después de haber ajustado esa
+cabecera para que respirara.
+
+Muestra `EN` o `ES`, pero **su nombre accesible es una frase completa** —"Ver este sitio en
+inglés"— porque un enlace que se anuncia como "EN" no le dice nada a quien usa un lector de
+pantalla. El texto visible va con `aria-hidden` y la frase en `sr-only`.
+
+Lleva `hrefLang` y **no** `lang`: `hrefLang` describe el idioma del destino, que es correcto;
+`lang` habría declarado que el contenido del enlace está en el otro idioma, y habría hecho
+que un lector de pantalla leyera la descripción en español con pronunciación inglesa.
 
 ---
 
@@ -373,8 +478,9 @@ canónica era la portada. Son dos señales que se contradicen, y Google puede re
 contradicción juntando el par y sacando del índice la portada, que es la única página
 indexable del sitio.
 
-Ahora `alternates.canonical` se declara en [`page.tsx`](../src/app/page.tsx). La 404 no
-declara ninguna, que es lo correcto para una página que no se indexa.
+Ahora `alternates` se declara en las páginas, con `homeMetadata(locale)` de
+[`metadata.ts`](../src/lib/metadata.ts). La 404 no declara ninguna, que es lo correcto para
+una página que no se indexa.
 
 **Cuidado al mover metadatos entre segmentos:** Next.js los fusiona de forma
 **superficial**. Un objeto anidado definido en la página —`openGraph`, `twitter`,
