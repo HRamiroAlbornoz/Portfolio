@@ -87,6 +87,15 @@ assertSameKeys("los slugs de proyecto", (content) =>
   content.projects.map((project) => project.slug),
 );
 
+for (const locale of LOCALES) {
+  if (CONTENT[locale].ui.language.code === locale) {
+    throw new Error(
+      `El selector de idioma de "${locale}" apunta a su propio idioma. ` +
+        "El campo ui.language.code tiene que nombrar el idioma de destino, no el actual.",
+    );
+  }
+}
+
 export function getContent(locale: Locale): Content {
   return CONTENT[locale];
 }
