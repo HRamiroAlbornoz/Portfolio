@@ -492,6 +492,17 @@ borrado el tipo, el idioma y el nombre del sitio.
 en la indexación —Google usa la canónica, no esta etiqueta— y hace que compartir un enlace
 roto muestre la tarjeta de la portada en lugar de una tarjeta rota.
 
+**Con `global-not-found` eso hay que sostenerlo a mano.** Al ser su propia raíz, la 404 no
+hereda de ningún layout: compone su `metadata` con `...rootMetadata(DEFAULT_LOCALE)` y solo
+reemplaza el título. Sin ese esparcido queda sin `description`, sin `openGraph` y sin
+`twitter`, y un enlace roto compartido en LinkedIn muestra una tarjeta vacía. **Pasó**: se
+introdujo al montar los dos idiomas y lo detectó la revisión del PR #17.
+
+Lo único que no se recupera es `og:image`: la imagen se asocia por convención de archivo al
+segmento de ruta, y la 404 no tiene ninguna hermana. La tarjeta sale con título, descripción
+y dominio, sin imagen. Es un caso raro —hay que compartir un enlace roto— y la alternativa
+sería cablear a mano una URL que lleva un hash de contenido y se desactualizaría sola.
+
 ### No hay etiqueta `robots` en la portada
 
 `index, follow` es el comportamiento por defecto de cualquier página. Declararlo no agrega
@@ -501,6 +512,12 @@ Peor: declararlo en el layout provocaba que la 404 emitiera **dos** etiquetas `r
 porque Next.js ya emite `noindex` por su cuenta en las rutas no encontradas. Al sacar la
 declaración del layout y también la de `not-found.tsx`, la portada no lleva ninguna
 —y es indexable por defecto— y la 404 lleva exactamente una, la del framework.
+
+**Este defecto volvió una vez.** Al escribir `global-not-found.tsx` se le puso
+`robots: { index: false, follow: false }`, por las dudas, y reapareció el par de etiquetas en
+conflicto —más un `nofollow` que le pedía al buscador no seguir el único enlace de la
+página—. La regla, entonces, escrita como regla: **la 404 no declara `robots`; el framework
+ya lo hace.**
 
 ### El mapa del sitio no declara fechas
 

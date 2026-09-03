@@ -4,12 +4,13 @@ import Link from "next/link";
 import { SiteDocument } from "@/app/_site-document";
 import { getContent } from "@/content";
 import { DEFAULT_LOCALE, localeHref } from "@/lib/locale";
+import { rootMetadata } from "@/lib/metadata";
 
-const { ui } = getContent(DEFAULT_LOCALE);
+const { site, ui } = getContent(DEFAULT_LOCALE);
 
 export const metadata: Metadata = {
-  title: ui.notFound.title,
-  robots: { index: false, follow: false },
+  ...rootMetadata(DEFAULT_LOCALE),
+  title: `${ui.notFound.title} — ${site.name}`,
 };
 
 export default function GlobalNotFound() {
