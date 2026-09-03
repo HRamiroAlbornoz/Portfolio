@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import type { Section, SectionId } from "@/lib/schemas";
 
 const SCROLL_PROGRESS_PROPERTY = "--trace-progress";
-const READING_LINE_RATIO = 0.5;
+const ARRIVAL_TOLERANCE = 4;
 const BOTTOM_PROGRESS_THRESHOLD = 0.999;
 
 type TraceRailProps = {
@@ -23,16 +23,19 @@ function readScrollProgress(): number {
   return Math.min(1, Math.max(0, window.scrollY / scrollable));
 }
 
-function findSectionAtReadingLine(
-  sections: readonly Section[],
-  progress: number,
-): SectionId | null {
-  if (progress >= BOTTOM_PROGRESS_THRESHOLD) {
-    return sections[sections.length - 1]?.id ?? null;
-  }
+function readPixels(value: string): number {
+  const pixels = Number.parseFloat(value);
 
-  const readingLine = window.innerHeight * READING_LINE_RATIO;
-  let current: SectionId | null = null;
+  return Number.isNaN(pixels) ? 0 : pixels;
+}
+
+function measureArrivalLines(
+  sections: readonly Section[],
+): Map<SectionId, number> {
+  const scrollPadding = readPixels(
+    window.getComputedStyle(document.documentElement).scrollPaddingTop,
+  );
+  const lines = new Map<SectionId, number>();
 
   for (const section of sections) {
     const element = document.getElementById(section.id);
@@ -41,9 +44,38 @@ function findSectionAtReadingLine(
       continue;
     }
 
+    const scrollMargin = readPixels(
+      window.getComputedStyle(element).scrollMarginTop,
+    );
+
+    lines.set(section.id, scrollPadding + scrollMargin + ARRIVAL_TOLERANCE);
+  }
+
+  return lines;
+}
+
+function findCurrentSection(
+  sections: readonly Section[],
+  arrivalLines: Map<SectionId, number>,
+  progress: number,
+): SectionId | null {
+  if (progress >= BOTTOM_PROGRESS_THRESHOLD) {
+    return sections[sections.length - 1]?.id ?? null;
+  }
+
+  let current: SectionId | null = null;
+
+  for (const section of sections) {
+    const element = document.getElementById(section.id);
+    const arrivalLine = arrivalLines.get(section.id);
+
+    if (element === null || arrivalLine === undefined) {
+      continue;
+    }
+
     const box = element.getBoundingClientRect();
 
-    if (box.height > 0 && box.top <= readingLine) {
+    if (box.height > 0 && box.top <= arrivalLine) {
       current = section.id;
     }
   }
@@ -64,9 +96,11 @@ export function TraceRail({ label, sections }: TraceRailProps) {
 
     let frame = 0;
     let isRailVisible = false;
+    let arrivalLines = new Map<SectionId, number>();
 
-    const refreshVisibility = () => {
+    const refreshMeasurements = () => {
       isRailVisible = window.getComputedStyle(rail).display !== "none";
+      arrivalLines = measureArrivalLines(sections);
     };
 
     const paint = () => {
@@ -77,7 +111,7 @@ export function TraceRail({ label, sections }: TraceRailProps) {
       }
 
       const progress = readScrollProgress();
-      const active = findSectionAtReadingLine(sections, progress);
+      const active = findCurrentSection(sections, arrivalLines, progress);
 
       rail.style.setProperty(SCROLL_PROGRESS_PROPERTY, progress.toFixed(4));
       setActiveId(active);
@@ -90,11 +124,11 @@ export function TraceRail({ label, sections }: TraceRailProps) {
     };
 
     const handleResize = () => {
-      refreshVisibility();
+      refreshMeasurements();
       schedulePaint();
     };
 
-    refreshVisibility();
+    refreshMeasurements();
     paint();
 
     window.addEventListener("scroll", schedulePaint, { passive: true });

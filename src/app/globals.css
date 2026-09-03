@@ -107,6 +107,12 @@
     scroll-padding-top: var(--header-height);
   }
 
+  @media (width >= 64rem) {
+    main > section:last-of-type {
+      min-height: 50vh;
+    }
+  }
+
   body {
     background-color: var(--ink);
     color: var(--fore);
