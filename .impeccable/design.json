@@ -1,0 +1,245 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-21T00:00:00.000Z",
+  "title": "Design System: Portfolio de Hernán Ramiro Albornoz",
+  "extensions": {
+    "colorMeta": {
+      "trace": {
+        "role": "primary",
+        "displayName": "Verde de traza",
+        "canonical": "#007c00"
+      },
+      "trace-dark": {
+        "role": "primary",
+        "displayName": "Verde de traza (oscuro)",
+        "canonical": "#9fc27c"
+      },
+      "pending": {
+        "role": "secondary",
+        "displayName": "Ámbar de anotación",
+        "canonical": "#836709"
+      },
+      "pending-dark": {
+        "role": "secondary",
+        "displayName": "Ámbar de anotación (oscuro)",
+        "canonical": "#d4a541"
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Tinta de página",
+        "canonical": "#f6f2ec"
+      },
+      "ink-dark": {
+        "role": "neutral",
+        "displayName": "Tinta de página (oscuro)",
+        "canonical": "#14120f"
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Superficie elevada",
+        "canonical": "#ffffff"
+      },
+      "surface-dark": {
+        "role": "neutral",
+        "displayName": "Superficie elevada (oscuro)",
+        "canonical": "#24201c"
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "Filete",
+        "canonical": "#ddd5ca"
+      },
+      "line-dark": {
+        "role": "neutral",
+        "displayName": "Filete (oscuro)",
+        "canonical": "#3a3630"
+      },
+      "fore": {
+        "role": "neutral",
+        "displayName": "Texto principal",
+        "canonical": "#14120f"
+      },
+      "fore-dark": {
+        "role": "neutral",
+        "displayName": "Texto principal (oscuro)",
+        "canonical": "#f2efea"
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Texto secundario",
+        "canonical": "#6b6157"
+      },
+      "muted-dark": {
+        "role": "neutral",
+        "displayName": "Texto secundario (oscuro)",
+        "canonical": "#a39c92"
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "El nombre en la primera pantalla. Una sola vez por página."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Títulos de las cinco secciones y el rol en la primera pantalla."
+      },
+      "subtitle": {
+        "displayName": "Subtitle",
+        "purpose": "Nombre de proyecto y título de formación."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Párrafos y listas, limitados a max-w-prose donde el texto es corrido."
+      },
+      "eyebrow": {
+        "displayName": "Eyebrow",
+        "purpose": "Etiquetas, metadatos y enlaces cortos. Siempre monoespaciada y en mayúsculas."
+      }
+    },
+    "shadows": [],
+    "motion": [
+      {
+        "name": "state-transition",
+        "value": "150ms cubic-bezier(0.4, 0, 0.2, 1)",
+        "purpose": "Única transición del sistema. Se aplica a color y opacidad en estados de foco y hover."
+      },
+      {
+        "name": "reduced-motion-clamp",
+        "value": "0.01ms",
+        "purpose": "Duraciones y retrasos se anulan a 0.01ms, no a 0: con cero, algunos navegadores nunca disparan el evento de fin de animación."
+      }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "lg", "value": "1024px" },
+      { "name": "xl", "value": "1280px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Enlace de contenido",
+      "kind": "custom",
+      "refersTo": "link-inline",
+      "description": "Todo enlace dentro del texto. El sistema no tiene botones: esta es la acción.",
+      "html": "<a class=\"ds-link-inline\" href=\"#\">hralborn@hotmail.com</a>",
+      "css": ".ds-link-inline { display: inline-flex; align-items: center; min-height: 2.75rem; font-family: var(--stack-body); font-size: 1.0625rem; line-height: 1.7; color: var(--trace); text-decoration: underline; text-underline-offset: 4px; transition: color 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-link-inline:focus-visible { outline: 2px solid var(--trace); outline-offset: 3px; }"
+    },
+    {
+      "name": "Enlace-etiqueta",
+      "kind": "custom",
+      "refersTo": "link-label",
+      "description": "Repositorios, redes, CV y pie. Monoespaciada en mayúsculas.",
+      "html": "<a class=\"ds-link-label\" href=\"#\">GitHub</a>",
+      "css": ".ds-link-label { display: inline-flex; align-items: center; min-height: 2.75rem; font-family: var(--stack-mono); font-size: 0.75rem; line-height: 1; letter-spacing: 0.18em; font-weight: 500; text-transform: uppercase; color: var(--trace); text-decoration: underline; text-underline-offset: 4px; } .ds-link-label:focus-visible { outline: 2px solid var(--trace); outline-offset: 3px; }"
+    },
+    {
+      "name": "Tarjeta de proyecto",
+      "kind": "card",
+      "refersTo": "card-project",
+      "description": "El único lugar del sitio que usa el radio largo. Sin sombra, con filete.",
+      "html": "<article class=\"ds-card-project\"><h3>AutomateHub</h3><p class=\"ds-card-meta\">Desarrollo individual · 2026</p><p class=\"ds-card-body\">Servidor MCP que expone operaciones de la API de GitHub como herramientas para asistentes de IA.</p></article>",
+      "css": ".ds-card-project { display: flex; flex-direction: column; gap: 1rem; padding: 1.5rem; background: var(--surface); border: 1px solid var(--line); border-radius: 0.5rem; } .ds-card-project h3 { margin: 0; font-family: var(--stack-display); font-size: clamp(1.375rem, 2.5vw, 1.75rem); font-weight: 600; line-height: 1.2; letter-spacing: -0.015em; color: var(--fore); } .ds-card-meta { margin: 0; font-family: var(--stack-mono); font-size: 0.75rem; line-height: 1; letter-spacing: 0.18em; text-transform: uppercase; color: var(--pending); } .ds-card-body { margin: 0; font-family: var(--stack-body); font-size: 1.0625rem; line-height: 1.7; color: var(--muted); }"
+    },
+    {
+      "name": "Opción de tema",
+      "kind": "chip",
+      "refersTo": "theme-option",
+      "description": "Tres opciones excluyentes. La activa se distingue por filete, superficie y color a la vez, nunca solo por color.",
+      "html": "<div class=\"ds-theme-group\"><span class=\"ds-theme-option\">Claro</span><span class=\"ds-theme-option ds-theme-option--checked\">Oscuro</span><span class=\"ds-theme-option\">Sistema</span></div>",
+      "css": ".ds-theme-group { display: flex; align-items: center; gap: 0.25rem; } .ds-theme-option { display: inline-flex; align-items: center; justify-content: center; min-height: 2.75rem; padding: 0 0.75rem; border: 1px solid transparent; border-radius: 0.25rem; font-family: var(--stack-mono); font-size: 0.75rem; line-height: 1; letter-spacing: 0.18em; font-weight: 500; text-transform: uppercase; color: var(--muted); cursor: pointer; transition: color 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-theme-option:hover { color: var(--fore); } .ds-theme-option--checked { border-color: var(--trace); background: var(--surface); color: var(--trace); }"
+    },
+    {
+      "name": "Selector de idioma",
+      "kind": "button",
+      "refersTo": "language-link",
+      "description": "Acotado por filete para que se lea como control. Cuadrado de 2.75rem, con shrink-0 para que no lo achique un contenedor flex.",
+      "html": "<a class=\"ds-language-link\" href=\"#\" hreflang=\"en\">EN</a>",
+      "css": ".ds-language-link { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; min-height: 2.75rem; width: 2.75rem; border: 1px solid var(--line); border-radius: 0.25rem; font-family: var(--stack-mono); font-size: 0.75rem; line-height: 1; letter-spacing: 0.18em; font-weight: 500; text-transform: uppercase; color: var(--trace); text-decoration: underline; text-underline-offset: 4px; transition: border-color 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-language-link:hover { border-color: var(--trace); } .ds-language-link:focus-visible { outline: 2px solid var(--trace); outline-offset: 2px; }"
+    },
+    {
+      "name": "Riel de traza",
+      "kind": "nav",
+      "refersTo": "trace-node",
+      "description": "Componente distintivo. Navegación a partir de 1024px. El nodo actual es el único relleno verde de la página.",
+      "html": "<nav class=\"ds-rail\"><span class=\"ds-rail-track\"></span><span class=\"ds-rail-progress\"></span><ul><li><a href=\"#\"><span class=\"ds-rail-node\"></span><span class=\"ds-rail-label\">Sobre mí</span></a></li><li><a href=\"#\" aria-current=\"true\"><span class=\"ds-rail-node ds-rail-node--current\"></span><span class=\"ds-rail-label ds-rail-label--current\">Stack</span></a></li><li><a href=\"#\"><span class=\"ds-rail-node\"></span><span class=\"ds-rail-label\">Proyectos</span></a></li></ul></nav>",
+      "css": ".ds-rail { position: relative; } .ds-rail ul { position: relative; display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; } .ds-rail a { display: flex; align-items: center; gap: 0.75rem; min-height: 2.75rem; text-decoration: none; } .ds-rail-track { position: absolute; top: 0; left: 5px; width: 1px; height: 100%; background: var(--line); } .ds-rail-progress { position: absolute; top: 0; left: 5px; width: 1px; height: 40%; background: var(--trace); } .ds-rail-node { width: 11px; height: 11px; flex-shrink: 0; border: 1px solid var(--line); border-radius: 3.40282e38px; background: var(--ink); transition: border-color 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-rail-node--current { border-color: var(--trace); background: var(--trace); } .ds-rail-label { font-family: var(--stack-mono); font-size: 0.75rem; line-height: 1; letter-spacing: 0.18em; font-weight: 500; text-transform: uppercase; white-space: nowrap; color: var(--muted); } .ds-rail-label--current { color: var(--trace); }"
+    },
+    {
+      "name": "Traza del stack",
+      "kind": "custom",
+      "refersTo": "trace-node",
+      "description": "Componente distintivo. Repite la figura del riel dentro del documento: línea, nodo y tramo horizontal por capa, con un nodo suelto que cierra.",
+      "html": "<div class=\"ds-stack\"><span class=\"ds-stack-line\"></span><ol><li><span class=\"ds-stack-node\"></span><span class=\"ds-stack-tick\"></span><div><h3 class=\"ds-stack-label\">Interfaz</h3><ul class=\"ds-stack-items\"><li>React</li><li>Next.js</li><li>TypeScript</li></ul></div></li></ol><span class=\"ds-stack-end\"></span></div>",
+      "css": ".ds-stack { position: relative; } .ds-stack ol { display: flex; flex-direction: column; gap: 2rem; margin: 0; padding: 0; list-style: none; } .ds-stack ol > li { display: flex; align-items: flex-start; gap: 1rem; } .ds-stack-line { position: absolute; top: 5px; bottom: 5px; left: 5px; width: 1px; background: var(--trace); } .ds-stack-node { width: 11px; height: 11px; flex-shrink: 0; margin-top: 1px; border-radius: 3.40282e38px; background: var(--trace); } .ds-stack-tick { width: 1rem; height: 1px; flex-shrink: 0; margin-top: 6px; background: var(--trace); } .ds-stack-label { margin: 0 0 0.75rem; font-family: var(--stack-mono); font-size: 0.75rem; line-height: 1; letter-spacing: 0.18em; font-weight: 500; text-transform: uppercase; color: var(--trace); } .ds-stack-items { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; margin: 0; padding: 0; list-style: none; font-family: var(--stack-body); font-size: 1.0625rem; color: var(--muted); } .ds-stack-end { display: block; width: 11px; height: 11px; margin-top: 1.5rem; border-radius: 3.40282e38px; background: var(--trace); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "El trazo de ejecución",
+    "overview": "El sitio se recorre como se recorre la ejecución de un programa. Una traza vertical fina, marcada con nodos, acompaña el scroll y hace de navegación: cada nodo es un paso, el nodo relleno es dónde estás, y la parte de la línea que ya se pintó es lo que quedó atrás. La misma figura reaparece dentro de la página, dibujando las capas del stack. No es un adorno que se repite: es el mismo concepto aplicado dos veces.\n\nDe ahí sale todo lo demás. La paleta es tinta cálida —un solo plano, sin sombras— porque la traza necesita una superficie limpia sobre la cual leerse. La monoespaciada aparece solo en las etiquetas, en mayúsculas y con mucho interletrado, como la anotación al margen de un diagrama. El verde marca la traza y el estado, nunca decora. Y el texto es lo único que pesa: todo lo que lo rodea es andamiaje de un píxel.\n\nEl sistema se define contra dos cosas concretas. Contra el portfolio de egresado de bootcamp: tarjetas flotando con sombra, gradientes de relleno, íconos de colores, barras de progreso que afirman \"React 85%\". Y contra el portfolio de diseñador: imágenes a sangre, tipografía decorativa gigante, efectos de scroll, mucho aire y nada verificable. El primero se ve amateur; el segundo promete algo que el trabajo no respalda.",
+    "keyCharacteristics": [
+      "Una traza con nodos que es navegación, no ilustración.",
+      "Un solo plano: sin una sola sombra en todo el proyecto.",
+      "Contenido y andamiaje: el texto pesa, la estructura es de un píxel.",
+      "Dos temas completos, ninguno derivado mecánicamente del otro.",
+      "Cinco pasos de tipografía y siete tokens de color. No hay un sexto ni un octavo."
+    ],
+    "rules": [
+      {
+        "name": "La regla del relleno único",
+        "body": "El verde rellena una sola cosa en toda la página: el nodo de la sección actual. En cualquier otro lugar es línea, borde o texto. Un botón verde relleno rompe el sistema, porque le saca al acento lo único que lo hace significar algo: que es raro.",
+        "section": "colors"
+      },
+      {
+        "name": "La regla del ámbar inerte",
+        "body": "El ámbar nunca es accionable. Si un elemento ámbar se vuelve un enlace, cambia de color; no se le agrega un subrayado.",
+        "section": "colors"
+      },
+      {
+        "name": "La regla de la medición",
+        "body": "Todo par de colores nuevo se mide antes de usarse: 4.5:1 en texto y 3:1 en elementos no textuales y estados. Una pista de forma —un borde, un ícono— también se mide.",
+        "section": "colors"
+      },
+      {
+        "name": "La regla de los cinco pasos",
+        "body": "Ningún componente escribe un tamaño de letra arbitrario. Hay cinco nombres en la escala y se usa uno de los cinco.",
+        "section": "typography"
+      },
+      {
+        "name": "La regla del techo del display",
+        "body": "El máximo de display es 6.5rem por decisión tomada y documentada, no por accidente. Subirlo es revertir esa decisión, no afinarla.",
+        "section": "typography"
+      },
+      {
+        "name": "La regla del plano único",
+        "body": "Si algo necesita destacarse, cambia de superficie o gana un filete. Nunca se levanta. box-shadow no pertenece a este sistema.",
+        "section": "elevation"
+      },
+      {
+        "name": "La regla de los dos círculos",
+        "body": "El sistema tiene exactamente dos elementos redondos: el nodo de la traza (11px) y el marcador de tecnología sin ícono (16px). Un tercer círculo —un avatar, una viñeta, un indicador— tiene que justificarse como decisión de sistema.",
+        "section": "shapes"
+      },
+      {
+        "name": "La regla del punteado",
+        "body": "El filete punteado significa una sola cosa: acá todavía no hay nada. No se usa para separar, para decorar ni para marcar un estado deshabilitado.",
+        "section": "shapes"
+      }
+    ],
+    "dos": [
+      "Do usar los cinco nombres de la escala tipográfica y los siete tokens de color. Nunca un hexadecimal ni un tamaño arbitrario dentro de un componente.",
+      "Do medir todo par de colores nuevo antes de usarlo: 4.5:1 en texto, 3:1 en elementos no textuales, y también las pistas de forma.",
+      "Do dar min-h-11 a todo elemento interactivo, aunque su texto sea de 12px.",
+      "Do distinguir un estado activo con más de una señal, como hace el selector de tema con filete, superficie y color a la vez.",
+      "Do construir la profundidad con un escalón de superficie o un filete de un píxel."
+    ],
+    "donts": [
+      "Don't agregar box-shadow. El sistema es de un solo plano.",
+      "Don't rellenar nada de verde salvo el nodo de la sección actual.",
+      "Don't volver accionable un elemento ámbar sin cambiarle el color.",
+      "Don't introducir un tercer radio ni un tercer círculo.",
+      "Don't usar un gradiente. No hay ninguno en el proyecto y no es una omisión.",
+      "Don't resolver la falta de densidad visual con adornos: este sistema agrega información, no ornamento."
+    ]
+  }
+}
