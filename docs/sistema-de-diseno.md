@@ -1,18 +1,35 @@
 # Sistema de diseño
 
-Este documento explica el porqué de cada decisión visual del portfolio. El código no
-lleva comentarios: la intención se registra acá.
+Este documento explica **el porqué** de cada decisión visual del portfolio, y qué se
+descartó en el camino. El código no lleva comentarios: la intención se registra acá.
 
-Todo el sistema vive en un solo archivo, [`src/app/globals.css`](../src/app/globals.css).
-Ningún componente del proyecto escribe un color hexadecimal ni un tamaño de letra
-arbitrario.
+**Qué documento mira según lo que busque:**
+
+| Busca | Archivo |
+|---|---|
+| Qué valor tiene un token, hoy | [`DESIGN.md`](../DESIGN.md) |
+| Por qué tiene ese valor y no otro | este documento |
+| Cómo se implementa | [`src/app/globals.css`](../src/app/globals.css) |
+
+`DESIGN.md` es la **fuente normativa** de los valores: la paleta, la escala tipográfica, los
+radios, los espacios y las reglas de uso. Este documento no los repite, para que no puedan
+desincronizarse; sí conserva las **mediciones** que respaldan cada decisión, que no viven en
+ningún otro lado.
+
+**El corte exacto, porque acá abajo van a seguir apareciendo valores:** un valor **enunciado
+como hecho** —"el token del acento es tal"— es repetición y va solo en `DESIGN.md`. Un valor
+que es **sujeto de una medición** —"`#836709` da 4.82 sobre el fondo claro"— es evidencia y se
+queda, porque sin él el número deja de ser reproducible. Lo mismo vale para los valores
+**descartados**: solo existen acá.
 
 ---
 
 ## Dirección visual: "Trazado"
 
-La página es el recorrido de una petición a través de una aplicación. Una traza vertical
-fina acompaña todo el scroll y cada sección es un nodo de esa traza.
+La página se recorre como se recorre la ejecución de un programa. Una traza vertical fina
+acompaña todo el scroll y cada sección es un nodo de esa traza. La formulación normativa de
+esa idea —el *north star* del sistema— vive en [`DESIGN.md`](../DESIGN.md#overview); acá está
+de dónde salió y qué se probó antes.
 
 La metáfora se cobra **solo donde es cierta**: en la sección Stack, donde la traza se
 ramifica en las capas reales (Interfaz, Lógica, Datos, Herramientas). En el resto del
@@ -23,9 +40,10 @@ vuelve punteada y el nodo queda hueco: el diseño declara el vacío en vez de di
 Cuando hay proyectos, la traza sigue entera y la sección muestra las tarjetas.
 
 El estado vacío se diseñó primero porque el brief original planteaba un portfolio sin
-proyectos. Al aparecer tres proyectos reales, el estado dejó de verse pero se conservó en
-el código: es lo que permite que agregar o quitar un proyecto sea editar un archivo de
-datos, sin tocar un solo componente.
+proyectos. En cuanto entraron proyectos reales dejó de verse, pero se conservó en el código:
+es lo que permite que agregar o quitar un proyecto sea editar un archivo de datos, sin tocar
+un solo componente. **La lista es abierta** —los proyectos entran, salen y se reemplazan—, así
+que el estado vacío no es un vestigio: es el extremo de un rango que se vuelve a visitar.
 
 ### Qué se descartó y por qué
 
@@ -53,15 +71,9 @@ repitiera los valores, tarde o temprano se desincronizarían.
 
 `@theme inline` traduce esos siete tokens a los nombres que entiende Tailwind.
 
-| Token | Claro | Oscuro | Para qué |
-|---|---|---|---|
-| `ink` | `#f6f2ec` | `#14120f` | Fondo de la página |
-| `surface` | `#ffffff` | `#24201c` | Tarjetas de proyecto |
-| `line` | `#ddd5ca` | `#3a3630` | Hairlines, bordes, traza inactiva |
-| `muted` | `#6b6157` | `#a39c92` | Texto secundario |
-| `fore` | `#14120f` | `#f2efea` | Texto principal |
-| `trace` | `#007c00` | `#9fc27c` | Traza activa, nodos, enlaces, foco |
-| `pending` | `#836709` | `#d4a541` | Metadatos de proyecto |
+Los catorce valores —siete tokens por dos temas— y el rol de cada uno están en
+[`DESIGN.md`](../DESIGN.md#colors). Acá abajo se explica por qué cada uno terminó donde
+terminó.
 
 El acento cambia de familia entre temas —menta clara sobre fondo oscuro, verde-azulado
 profundo sobre fondo claro— porque un mismo valor no puede tener contraste suficiente
@@ -411,13 +423,9 @@ oscura.
 
 ## Tipografía
 
-Tres roles, tres familias. Ninguna es la que trae el andamiaje de Next.js.
-
-| Rol | Familia | Variable CSS | Uso |
-|---|---|---|---|
-| Display | Archivo | `--stack-display` | El nombre y los titulares grandes |
-| Cuerpo | Instrument Sans | `--stack-body` | Todo el texto corrido |
-| Utilitaria | JetBrains Mono | `--stack-mono` | Etiquetas de capa, ítems de stack, metadatos |
+Tres roles, tres familias, expuestas como `--stack-display`, `--stack-body` y `--stack-mono`.
+Ninguna es la que trae el andamiaje de Next.js. Cuál es cada una y dónde se usa está en
+[`DESIGN.md`](../DESIGN.md#typography).
 
 Instrument Sans es una grotesca humanista, más cálida que Inter. JetBrains Mono es la
 voz técnica del sitio y por eso se usa con cuentagotas: si aparece en todos lados deja
@@ -434,16 +442,9 @@ aparezcan en el contenido.
 
 ### Escala
 
-Cinco tamaños con nombre. Cada uno arrastra su propio interlineado, espaciado y peso,
-así que es imposible usar un tamaño y equivocarse en el resto.
-
-| Clase | Tamaño | Interlineado | Espaciado | Peso |
-|---|---|---|---|---|
-| `text-display` | `clamp(3rem, 12vw, 6.5rem)` | 0.92 | -0.035em | 700 |
-| `text-title` | `clamp(1.75rem, 4vw, 2.75rem)` | 1.15 | -0.02em | 600 |
-| `text-subtitle` | `clamp(1.375rem, 2.5vw, 1.75rem)` | 1.2 | -0.015em | 600 |
-| `text-body` | `1.0625rem` | 1.7 | — | — |
-| `text-eyebrow` | `0.75rem` | 1 | 0.18em | 500 |
+Cinco tamaños con nombre —`display`, `title`, `subtitle`, `body` y `eyebrow`—, cada uno con su
+propio interlineado, espaciado y peso, así que es imposible usar un tamaño y equivocarse en el
+resto. Los valores están en [`DESIGN.md`](../DESIGN.md#typography).
 
 `text-subtitle` se agregó con el rediseño cálido. Antes, el título de una sección y el
 nombre de un proyecto usaban los dos `text-title`: la jerarquía era plana y todo pesaba
@@ -573,9 +574,31 @@ Meter una segunda metáfora en el lugar más visible de la página debilita la p
 
 ## Movimiento
 
-Un solo momento orquestado al cargar la página: la traza baja y el hero aparece en
-secuencia. Después, solo el avance de la traza con el scroll y un micro-hover en los
-nodos. Sin librería de animación.
+**Hoy el sitio no tiene ninguna animación.** No hay un solo `@keyframes` en `src/`. Lo único
+que se mueve son dos transiciones de estado —color en los nodos y las opciones de tema,
+opacidad en las etiquetas del riel— y el avance de la traza con el scroll, que no es una
+animación sino una variable CSS que el riel actualiza mientras se desplaza la página.
+
+**La secuencia de entrada está decidida y no está construida.** Este documento afirmó durante
+meses que existía "un solo momento orquestado al cargar la página: la traza baja y el hero
+aparece en secuencia". Es una decisión tomada, pero nunca se implementó, y la afirmación se
+corrigió al detectarse la deriva. Queda anotada como pendiente, no como hecho.
+
+Cuando se construya, estas son las restricciones que la gobiernan, y el porqué de cada una:
+
+- **Solo `@keyframes` y `transition`.** Es lo único que el bloque de `prefers-reduced-motion`
+  apaga de verdad. Un efecto armado con `position: sticky` y `transform`, con `filter` o con
+  `mix-blend-mode` **sobrevive intacto** a la preferencia, y el usuario que pidió menos
+  movimiento lo recibe igual.
+- **Nada ligado al scroll.** `animation-timeline` no es *Baseline*: la documentación lo marca
+  como de disponibilidad limitada y no funciona en varios de los navegadores más usados. Una
+  apuesta apoyada ahí no se ve en una parte del público.
+- **Solo se animan `opacity` y `transform`.** Cualquier otra propiedad mueve el layout y paga
+  CLS.
+- **El último fotograma tiene que ser igual al estado de reposo.** Con la preferencia activa,
+  `animation-iteration-count: 1` hace que la animación corra una vez y **se detenga en su
+  fotograma final**; si ese no es el estado neutro, la pantalla queda rota.
+- **Sin librería de animación**, como el resto del proyecto.
 
 Todo se apaga con `prefers-reduced-motion: reduce`.
 
@@ -586,22 +609,24 @@ colgado para siempre. Con 0.01 ms el evento se dispara de inmediato.
 Se anulan las duraciones **y también los retrasos** (`animation-delay`,
 `transition-delay`). Anular solo las duraciones es un error frecuente: la animación pasa
 a durar un instante, pero sigue esperando su retraso antes de empezar. En una secuencia
-escalonada como la del hero, eso dejaría a quien pidió menos movimiento mirando una
-pantalla vacía durante toda la espera — exactamente el problema que la preferencia
-buscaba evitar.
+escalonada como la que está pendiente para el hero, eso dejaría a quien pidió menos
+movimiento mirando una pantalla vacía durante toda la espera — exactamente el problema que la
+preferencia buscaba evitar. El bloque ya está escrito y anula las dos cosas, así que la
+secuencia nace protegida.
 
 ---
 
 ## Reglas de uso
 
-- Ningún componente escribe un color hexadecimal. Se usan las clases de token
-  (`bg-ink`, `text-fore`, `border-line`).
-- Ningún componente escribe un tamaño de letra arbitrario. Se usan los cinco nombres de
-  la escala.
-- `pending` marca señales de segundo orden y nunca contenido principal: los estados "sin
-  desplegar" y `404`, y los metadatos de proyectos y formación.
-- Todo color nuevo se mide antes de entrar al sistema.
+La lista normativa está en [`DESIGN.md`](../DESIGN.md#dos-and-donts). Acá quedan solo las tres
+reglas cuyo porqué es propio de este proyecto y no se entiende sin él:
+
+- **`pending` marca señales de segundo orden y nunca contenido principal**: los estados "sin
+  desplegar" y `404`, y los metadatos de proyectos y formación. Lo que unifica esos cuatro usos
+  no es el tono sino la jerarquía: ninguno es aquello que el visitante vino a leer.
 - **Ningún estado se comunica solo con color.** Todo cambio de estado lleva además una
-  diferencia de forma —fondo, borde, subrayado— que sobreviva al daltonismo.
-- El foco de teclado nunca se desactiva. `:focus-visible` está definido globalmente en
-  `globals.css` y solo aparece para quien navega con teclado.
+  diferencia de forma —fondo, borde, subrayado— que sobreviva al daltonismo. Y esa diferencia
+  de forma **también se mide**: el primer intento de arreglar el contraste de las opciones de
+  tema agregó una pista tan débil como el defecto que corregía.
+- **El foco de teclado nunca se desactiva.** `:focus-visible` está definido globalmente en
+  `globals.css`, así que aparece solo para quien navega con teclado y nunca al hacer clic.

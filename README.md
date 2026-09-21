@@ -119,8 +119,10 @@ trabajo, y todo porqué no evidente vive acá.
 
 | Documento | Qué contiene |
 |---|---|
+| [`PRODUCT.md`](./PRODUCT.md) | Quién usa el sitio, para qué existe, qué lo diferencia, y qué evidencia hay y cuál no |
+| [`DESIGN.md`](./DESIGN.md) | El sistema visual **tal como está hoy**: la paleta, la escala tipográfica, los radios, los espacios y las reglas de uso. Es la fuente normativa de los valores |
 | [`docs/arquitectura.md`](./docs/arquitectura.md) | Cada decisión con la alternativa que se descartó: Next.js sobre Vite, la frontera servidor/cliente, cómo funciona la traza, los iconos, la imagen de previsualización, y qué datos personales se publican y cuáles no |
-| [`docs/sistema-de-diseno.md`](./docs/sistema-de-diseno.md) | Los siete tokens de color con sus contrastes medidos, los tres estados del tema, la escala tipográfica y las reglas de movimiento |
+| [`docs/sistema-de-diseno.md`](./docs/sistema-de-diseno.md) | **Por qué** el sistema visual es así: los contrastes medidos, los colores que se descartaron y el motivo, los tres estados del tema, y las restricciones de movimiento |
 | [`docs/agregar-proyecto.md`](./docs/agregar-proyecto.md) | Guía paso a paso para sumar un proyecto terminado |
 
 ---
