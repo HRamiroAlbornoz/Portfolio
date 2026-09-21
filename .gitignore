@@ -40,3 +40,11 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# impeccable (se commitean surfaces/, critique/, config.json y design.json)
+/.impeccable/bin/
+/.impeccable/build/
+/.impeccable/live/
+/.impeccable/mocks/
+/.impeccable/review/
+/.impeccable/config.local.json
