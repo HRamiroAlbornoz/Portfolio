@@ -72,6 +72,13 @@ repite cuatro valores de la paleta oscura como constantes de TypeScript, porque 
 Satori, que no ejecuta CSS. Si cambia un color del tema oscuro, hay que cambiarlo ahí
 también.
 
+**Y hay una tercera copia, que es documentación:** `DESIGN.md` en la raíz es el registro
+normativo del sistema visual —paleta, escala tipográfica, radios, espacios y reglas de uso— y
+`.impeccable/design.json` es su anexo. **Tocar un token obliga a actualizarlos.** Un valor que
+figura distinto en `globals.css` y en `DESIGN.md` convierte al documento en mentira, que es
+peor que no tenerlo: ya pasó con la sección «Movimiento» de `docs/sistema-de-diseno.md`, que
+describió durante meses una animación que nunca se construyó.
+
 **Y una segunda trampa, que con dos idiomas es peor:** Next.js invalida la caché de esa
 imagen con un hash **del contenido del archivo de ruta**, no de los datos que dibuja ni del
 módulo compartido. Si cambia un texto de `src/content/<idioma>/site.ts` que aparece en la
@@ -153,4 +160,7 @@ cualquier otro valor cae en la política estricta.
 ## Antes de dar algo por terminado
 
 Los porqués de todo lo anterior están en `docs/arquitectura.md` y `docs/sistema-de-diseno.md`.
+El **qué** del sistema visual —los valores vigentes— está en `DESIGN.md`, y quién usa el sitio
+y para qué, en `PRODUCT.md`. El corte entre los dos documentos de diseño: `DESIGN.md` dice
+cuánto vale un token hoy; `docs/sistema-de-diseno.md` dice por qué vale eso y qué se descartó.
 Cualquier decisión no evidente que se tome se documenta ahí, en la fase en que se toma.
