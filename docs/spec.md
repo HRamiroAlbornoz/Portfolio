@@ -71,26 +71,40 @@ dictamina que **1.12 y 1.16 son insuficientes** como señal de estado del select
 mismos dos números, juzgados de maneras opuestas. Lo que hay que reparar es la premisa, no la
 conformidad.
 
-1.1 **El escalón de superficie se percibe.** La tarjeta de proyecto contra la página alcanza
-**3:1 o más** en los dos temas, medido sobre los colores computados en la página. Es el
-criterio que sostiene la exención del filete: si la superficie agrupa, el borde puede
-limitarse a reforzar.
+1.1 **La agrupación la comunica el borde, no la superficie.** La primera versión de este
+criterio pedía 3:1 entre la tarjeta y la página, y **es inalcanzable**: para lograrlo `surface`
+tendría que ser un gris medio, y sobre él `muted`, `trace` y `pending` caerían entre 1.6:1 y
+3.1:1, por debajo del 4.5:1 que exige el texto. El escalón de superficie se queda en 1.12:1 y
+1.16:1 y deja de ser la premisa: la premisa pasa a ser el borde.
 
-1.2 **El filete y la traza inactiva se perciben.** El **borde** de la tarjeta, el **borde** del
-nodo no alcanzado y la **línea inactiva** del riel alcanzan 3:1 o más. No aplica al *relleno*
-del nodo inactivo, que es `ink` a propósito: el nodo hueco es lo que significa "todavía no".
+1.2 **El borde de la tarjeta y el del nodo no alcanzado se perciben.** Alcanzan 3:1 o más
+contra la página, y el de la tarjeta también contra su propio fondo. No aplica al *relleno* del
+nodo inactivo, que es `ink` a propósito: el nodo hueco es lo que significa "todavía no".
 
-1.3 **La medición queda registrada** en `docs/sistema-de-diseno.md`, con la misma forma que las
+**Quedan fuera, a propósito, dos elementos:**
+
+- **La pista inactiva del riel.** En tema claro no existe un gris que quede a 3:1 de la página
+  y a 3:1 del verde a la vez: `trace` contra `ink` da 4.85, y harían falta 9. Se eligió que el
+  progreso se distinga de la pista, que es la información; el recorrido lo marcan los nodos,
+  que sí llegan a 3:1.
+- **El filete de la cabecera.** La cabecera es translúcida, así que su contraste depende de lo
+  que pasa por debajo al desplazarse. Es un separador decorativo.
+
+1.3 **El progreso del riel se distingue de la pista por luminancia, no solo por tono**:
+3:1 o más en los dos temas. Es la misma lección del selector de tema, donde el verde y el gris
+de `muted` daban 1.12.
+
+1.4 **La medición queda registrada** en `docs/sistema-de-diseno.md`, con la misma forma que las
 tablas de contraste que ya están ahí, **y se corrige el párrafo cuya premisa era falsa**.
 
-1.4 **La paleta sigue teniendo siete tokens.** No se agrega un octavo para resolver esto.
+1.5 **La paleta sigue teniendo siete tokens.** No se agrega un octavo para resolver esto.
 
-1.5 **En `/en`, ningún bloque de texto en español queda dentro de `lang="en"`.** Se verifica
+1.6 **En `/en`, ningún bloque de texto en español queda dentro de `lang="en"`.** Se verifica
 leyendo el HTML servido, no el código fuente.
 
-1.6 **La imagen de previsualización no se toca.** Los cuatro valores que duplica a mano
-—`ink`, `muted`, `fore` y `trace` del tema oscuro— no son los que cambia este arreglo, que
-mueve `surface` y `line`. Si eso dejara de ser cierto, hay que actualizarla **y tocar los dos
+1.7 **La imagen de previsualización no se toca.** Los cuatro valores que duplica a mano
+—`ink`, `muted`, `fore` y `trace` del tema oscuro— no incluyen `line`, que es el único token
+que cambia este arreglo. Si eso dejara de ser cierto, hay que actualizarla **y tocar los dos
 archivos de ruta**, o las cachés externas siguen sirviendo la vieja.
 
 ### 2 · La composición
@@ -134,9 +148,11 @@ fotograma de cada animación es igual al estado de reposo.
 3.5 **Solo se animan `opacity` y `transform`,** y solo con `@keyframes` y `transition`. Nada
 ligado al scroll, nada con `position: sticky` más `transform`, `filter` ni `mix-blend-mode`.
 
-3.6 **CLS se mantiene en 0.1 o menos**, que es el umbral "bueno" de Core Web Vitals. Se fija en
-valor absoluto y no como "no empeora" porque **nunca se midió**: el valor actual se captura en
-la misma corrida de Lighthouse que sirve de base, antes de tocar el hero.
+3.6 **CLS se mantiene en 0.1 o menos**, que es el umbral "bueno" de Core Web Vitals, y la
+meta real es **no pasar de 0.00**, que es lo medido el 22/09/2026 en las dos páginas: en
+escritorio a 1440 × 900 sin limitaciones, y en móvil a 360 × 640 con la CPU limitada 4× y red
+Slow 4G. La traza cubre **la carga**, que es donde actúa una secuencia de entrada; el
+desplazamiento posterior no quedó medido.
 
 3.7 **La demostración se percibe también a 320 px.** Una apuesta que solo existe en escritorio
 no cumple.
@@ -182,10 +198,13 @@ excepciones de lint. No se agrega una tercera de ninguna de las dos cosas.
 5.5 **Todo color nuevo o modificado se mide** contra AA: 4.5:1 en texto, 3:1 en elementos no
 textuales. Las pistas de forma también se miden.
 
-5.6 **Lighthouse en 100** en accesibilidad, SEO y buenas prácticas, en las dos páginas, en móvil
-y escritorio. **Esto se afirma sin haberlo verificado**: se mide antes de empezar, junto con
-CLS. Si alguna categoría ya está por debajo de 100, el criterio pasa a ser no bajarla y se
-registra el valor real acá.
+5.6 **Lighthouse sigue en 100** en accesibilidad, SEO y buenas prácticas, en las dos páginas, en
+móvil y escritorio. Medido el 22/09/2026 sobre el build de producción: **100 en las doce
+combinaciones**, sin una sola auditoría fallida.
+
+**Ese 100 no prueba accesibilidad.** Se obtuvo con los dos P0 abiertos: Lighthouse no mide el
+contraste de bordes y superficies —solo el de texto— ni detecta un bloque en español dentro de
+`lang="en"`. Es una baranda que no se puede romper, no evidencia de que el sitio esté bien.
 
 5.7 **El riel enciende la sección correcta** en los dos idiomas, incluidos el tope de la página
 y el final del scroll.
@@ -206,7 +225,7 @@ y el final del scroll.
   decidir el orden completo cuando haya muchos es otra tarea.
 - Revivir el deploy de MateCode, que responde 404 y sigue anunciado como homepage de su
   repositorio. Queda como deuda registrada.
-- Traducir los textos de los proyectos. La corrección 1.4 resuelve el defecto de accesibilidad
+- Traducir los textos de los proyectos. La corrección 1.6 resuelve el defecto de accesibilidad
   sin esperar la traducción.
 - Cambiar la dirección visual, mover el selector de idioma a la cabecera, o sumar un tercer
   componente de cliente.

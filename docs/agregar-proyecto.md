@@ -26,13 +26,15 @@ Ejemplo completo, con todos los campos:
 
 > **Hay que sumarlo en los dos idiomas.** El mismo objeto va también en
 > [`src/content/en/projects.ts`](../src/content/en/projects.ts), con el mismo `slug`. Si el
-> texto todavía no está traducido, copialo tal cual: los proyectos siguen en español en `/en`
-> a la espera de los proyectos rehechos. Lo que **no** puede diferir es el `slug`: hay una
-> validación cruzada en `src/content/index.ts` que rompe el build si los idiomas no coinciden.
+> texto todavía no está traducido, copialo tal cual y dejá `language: "es"` también en el
+> archivo inglés: los proyectos siguen en español en `/en` a la espera de los proyectos
+> rehechos. Lo que **no** puede diferir es el `slug`: hay una validación cruzada en
+> `src/content/index.ts` que rompe el build si los idiomas no coinciden.
 
 ```ts
 {
   slug: "gestor-de-turnos",
+  language: "es",
   name: "Gestor de turnos",
   role: "Desarrollo individual · Proyecto personal",
   summary:
@@ -76,6 +78,7 @@ gh pr create --base main --fill
 | Campo | Obligatorio | Qué es |
 |---|---|---|
 | `slug` | sí | Identificador corto en minúsculas, números y guiones. Es único: no puede repetirse |
+| `language` | sí | El idioma en que están escritos **los textos de este proyecto**: `"es"` o `"en"`. No es el idioma del archivo |
 | `name` | sí | El nombre visible del proyecto |
 | `role` | sí | Qué hiciste vos y en qué contexto. Por ejemplo: `"Backend Developer · Equipo de 3"` |
 | `summary` | sí | Uno o dos renglones: qué resuelve y cómo. Máximo 700 caracteres |
@@ -87,6 +90,13 @@ gh pr create --base main --fill
 
 **Sobre `role`:** es el campo que más lee un tech lead. "Construí X" no dice nada si no
 se sabe si lo hiciste solo, en equipo de cinco, o si tocaste solo una parte. Sé preciso.
+
+**Sobre `language`:** un lector de pantalla elige la pronunciación según el idioma declarado.
+Un texto en español dentro de la página inglesa, sin declararlo, se lee con fonética inglesa y
+se vuelve incomprensible. El sitio marca con ese valor el rol, el resumen, los logros y la
+captura; el nombre y las tecnologías no, porque son nombres propios. **Cuando traduzcas un
+proyecto al inglés, cambiá este campo a `"en"` en el mismo commit**, o el lector de pantalla
+leerá el inglés con fonética española.
 
 **Sobre `highlights`:** poné números y hechos verificables, no adjetivos. "API REST de 20
 endpoints con autenticación JWT" comunica; "aplicación robusta y escalable" no comunica

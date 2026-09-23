@@ -130,7 +130,9 @@ pie— y lo usan los dos layouts y el 404. Vive dentro de `src/app/` a propósit
 lint `@next/next/no-head-element` marca `<head>` fuera de ahí.
 
 Los textos de los proyectos siguen en español también en `/en`, a la espera de que se
-reemplacen por los proyectos rehechos.
+reemplacen por los proyectos rehechos. Por eso cada proyecto declara en `language` el idioma
+de **sus textos** —no el del archivo—, y `ProjectsSection` lo pone como `lang` en el rol, el
+resumen, los logros y la captura. Al traducir un proyecto, ese campo cambia en el mismo commit.
 
 ### Metadatos
 

@@ -5,6 +5,7 @@ import { projectsSchema } from "@/lib/schemas";
 export const projects = projectsSchema.parse([
   {
     slug: "nexopay",
+    language: "es",
     name: "NEXOPAY",
     role: "Backend Developer · Proyecto final de Henry · Equipo de 3",
     summary:
@@ -29,6 +30,7 @@ export const projects = projectsSchema.parse([
   },
   {
     slug: "automatehub",
+    language: "es",
     name: "AutomateHub",
     role: "Desarrollo individual · Proyecto personal",
     summary:
@@ -45,6 +47,7 @@ export const projects = projectsSchema.parse([
   },
   {
     slug: "matecode",
+    language: "es",
     name: "MateCode",
     role: "Desarrollo individual · Proyecto personal",
     summary:

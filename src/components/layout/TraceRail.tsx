@@ -150,7 +150,7 @@ export function TraceRail({ label, sections }: TraceRailProps) {
       <div className="relative">
         <span
           aria-hidden="true"
-          className="absolute top-0 left-[5px] h-full w-px bg-line"
+          className="absolute top-0 left-[5px] h-full w-px bg-line/40"
         />
         <span
           aria-hidden="true"

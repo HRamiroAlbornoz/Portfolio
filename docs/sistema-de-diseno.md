@@ -102,7 +102,10 @@ Calculados con la fórmula de luminancia relativa de WCAG 2.1, no estimados a oj
 | `pending` sobre `surface` | 7.13 | AAA |
 | `muted` sobre `ink` | 6.88 | AA |
 | `muted` sobre `surface` | 5.95 | AA |
-| `line` sobre `ink` | 1.56 | decorativo |
+| `line` sobre `ink` | 3.97 | no textual |
+| `line` sobre `surface` | 3.44 | no textual |
+| `trace` sobre la pista del riel | 5.80 | no textual |
+| `surface` sobre `ink` | 1.16 | decorativo |
 
 **Tema claro**
 
@@ -116,20 +119,75 @@ Calculados con la fórmula de luminancia relativa de WCAG 2.1, no estimados a oj
 | `pending` sobre `surface` | 5.37 | AA |
 | `trace` sobre `ink` | 4.85 | AA |
 | `pending` sobre `ink` | 4.82 | AA |
-| `line` sobre `ink` | 1.30 | decorativo |
+| `line` sobre `surface` | 3.62 | no textual |
+| `line` sobre `ink` | 3.25 | no textual |
+| `trace` sobre la pista del riel | 3.19 | no textual |
+| `surface` sobre `ink` | 1.12 | decorativo |
 
-`line` no alcanza ningún nivel, y desde el rediseño hace falta justificarlo mejor, porque
-además de hairlines ahora dibuja **el borde de las tarjetas de proyecto**: pasó de separador
-a elemento estructural.
+Los valores de `line` y de la pista son los computados en la página servida, no los del
+cálculo: la pista es `line` al 40 % mezclado sobre `ink`, y solo el navegador sabe en qué
+color termina.
 
-Se sostiene igual. WCAG 1.4.11 exige 3:1 para objetos gráficos **necesarios para entender el
-contenido**, y el borde de una tarjeta no lo es: el agrupamiento ya lo comunican la superficie
-elevada y el espaciado, y el texto se lee completo y en orden aunque el borde no se perciba.
-El borde refuerza, no informa.
+### Por qué `line` pasó de decorativo a 3:1
 
-Dentro de la traza, `line` dibuja el tramo inactivo del riel y **el borde de los nodos
-todavía no alcanzados**, que además llevan `ink` de relleno. El nodo activo pasa a `trace`,
-relleno y borde. La etiqueta de cada sección usa `muted`, y la activa `trace`.
+Hasta septiembre de 2026, `line` valía `#ddd5ca` en claro y `#3a3630` en oscuro, y daba
+**1.30** y **1.56** contra la página. El documento lo justificaba así: WCAG 1.4.11 exige 3:1
+solo para objetos gráficos **necesarios para entender el contenido**, y el borde de una tarjeta
+no lo era, porque *"el agrupamiento ya lo comunican la superficie elevada y el espaciado"*.
+
+El razonamiento era correcto; **la premisa era falsa**. La superficie elevada está a 1.12 y
+1.16 de la página, y este mismo documento, en «La opción activa no puede distinguirse solo por
+color», dictamina que esos dos números **no alcanzan** como señal. La revisión de diseño del
+21/09/2026 lo midió y lo marcó como P0: las tarjetas, los filetes y el riel eran invisibles.
+
+La salida obvia —subir `surface` a 3:1— es imposible. Para lograrlo la tarjeta tendría que
+ser un gris medio, y sobre él `muted`, `trace` y `pending` caerían entre 1.6 y 3.1: se
+arreglaba un contraste rompiendo tres. Así que **la señal se movió al filete**. `surface`
+quedó como está, sutil a propósito, y `line` se oscureció hasta 3:1. Los valores nuevos salen
+de mezclar `muted` con `ink` —el 75 % en claro, el 70 % en oscuro—, así que siguen en la misma
+temperatura de la paleta y no suman un tono.
+
+**Qué arrastra.** `line` se usa en siete lugares, y los siete se marcan más: el borde de la
+tarjeta y el marco de su captura, los nodos del riel, el borde del selector de idioma, y los
+filetes de la cabecera y del pie. Se aceptó a propósito, en lugar de oscurecer solo las
+tarjetas: separar los usos habría obligado a inventar un color que no es ninguno de los siete.
+
+### Por qué la pista del riel no llega a 3:1
+
+Oscurecer `line` rompió otra cosa. El riel es una pista gris con una línea verde que avanza
+encima, y se distinguían porque una era clara y la otra oscura. Con `line` a 3:1, el verde
+contra la pista cae a **1.49** en claro: la diferencia pasa a ser solo de tono, y quien no
+distingue el rojo del verde deja de ver el progreso.
+
+No existe un gris que resuelva las dos cosas. En tema claro, `trace` contra `ink` da **4.85**.
+Para que la pista quede a 3:1 de la página **y** a 3:1 del verde harían falta 3 × 3 = 9 de
+separación total, y hay 4.85.
+
+Hubo que elegir, y se eligió el progreso: es la información, y es la metáfora del sitio. La
+pista usa `line` al 40 % y queda en 1.52 contra la página en claro y 1.61 en oscuro; el verde queda a **3.19** de ella en
+claro y **5.80** en oscuro. **El recorrido lo marcan los nodos**, cuyo filete sí llega a 3:1:
+la pista deja de ser necesaria para entender por dónde pasa el riel.
+
+Se descartó la alternativa de dejar la pista a 3:1 y engrosar el progreso a 3px, para que se
+distinguieran por grosor. Funcionaba, pero ponía una línea gris fuerte a competir con la
+verde, que es la única que tiene que leerse.
+
+**Queda un costo registrado:** al pasar el puntero, el nodo del riel y el selector de idioma
+cambian su filete de `line` a `trace`, y en claro esa diferencia es de 1.49. En el riel no
+importa, porque la etiqueta también cambia. En el selector de idioma el filete era la única
+señal de hover; se aceptó porque WCAG no exige señal de hover y el texto ya es un enlace
+subrayado.
+
+**Y un elemento queda fuera de toda medición:** el filete de la cabecera. La cabecera es
+translúcida y su contraste depende de lo que pasa por debajo al desplazarse —entre 2.3 y 4.1—.
+Es un separador decorativo.
+
+### Cómo se dibuja la traza
+
+Dentro de la traza, `line` al 40 % dibuja el tramo inactivo del riel, y `line` pleno dibuja
+**el borde de los nodos todavía no alcanzados**, que además llevan `ink` de relleno. El nodo
+activo pasa a `trace`, relleno y borde. La etiqueta de cada sección usa `muted`, y la activa
+`trace`.
 
 ### Por qué las etiquetas del riel no llevan opacidad
 
@@ -223,7 +281,8 @@ de `ink` era de **1.09** en oscuro y **1.06** en claro. Con esa diferencia, una 
 invisible.
 
 No alcanzaba con empezar a usarlo: había que separarlo. Los valores nuevos dan **1.16** y
-**1.12**. Sigue siendo una diferencia sutil —una tarjeta no debe gritar— pero perceptible.
+**1.12**. Se los dio por perceptibles, y **no lo son** como señal por sí solos: la tarjeta la
+delimita su filete. El porqué está en «Por qué `line` pasó de decorativo a 3:1».
 
 Dentro de una tarjeta, el contenedor de imagen usa `ink`, no `surface`: sobre una superficie
 elevada, el hueco de la captura tiene que hundirse, no fundirse.
