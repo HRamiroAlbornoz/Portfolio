@@ -4,14 +4,14 @@ description: Un sitio que se recorre como se recorre la ejecución de un program
 colors:
   ink: "#f6f2ec"
   surface: "#ffffff"
-  line: "#ddd5ca"
+  line: "#8e857c"
   muted: "#6b6157"
   fore: "#14120f"
   trace: "#007c00"
   pending: "#836709"
   ink-dark: "#14120f"
   surface-dark: "#24201c"
-  line-dark: "#3a3630"
+  line-dark: "#78736b"
   muted-dark: "#a39c92"
   fore-dark: "#f2efea"
   trace-dark: "#9fc27c"
@@ -157,9 +157,12 @@ otro. Los nombres sin sufijo son los del tema claro, que es el que vive en `:roo
   dibuja la traza. El nombre viene del tema oscuro, donde la página *es* tinta; en claro es el
   papel.
 - **Superficie elevada** (`surface`, `#ffffff` claro / `#24201c` oscuro): el único escalón de
-  profundidad que existe. Tarjetas de proyecto, opción de tema activa, enlace de salto.
-- **Filete** (`line`, `#ddd5ca` claro / `#3a3630` oscuro): bordes y divisores de un píxel.
-  Nunca rellena.
+  profundidad que existe. Tarjetas de proyecto, opción de tema activa, enlace de salto. Es un
+  escalón sutil y acompaña: **lo que delimita una tarjeta es su filete**, no su fondo.
+- **Filete** (`line`, `#8e857c` claro / `#78736b` oscuro): bordes y divisores de un píxel, a
+  3:1 o más contra la página y contra la superficie. Nunca rellena. **Una sola excepción de
+  intensidad:** la pista inactiva del riel usa `line` al 40 %, para que el progreso en verde se
+  distinga de ella por luminancia y no solo por tono.
 - **Texto principal** (`fore`, `#14120f` claro / `#f2efea` oscuro): títulos de sección y de
   proyecto, y la frase de apertura de la primera pantalla.
 - **Texto secundario** (`muted`, `#6b6157` claro / `#a39c92` oscuro): párrafos, listas,
@@ -247,8 +250,8 @@ distinguirlas.
 
 **Este sistema no tiene sombras.** Ni una, en todo el proyecto. La profundidad se construye
 con dos recursos: un único escalón tonal —`surface` sobre `ink`— y filetes de un píxel en
-`line`. No hay segundo escalón, ni desenfoques, ni superposiciones translúcidas fuera del
-respaldo de la cabecera.
+`line`. No hay segundo escalón ni desenfoques, y hay solo dos translucideces: el respaldo de
+la cabecera y la pista inactiva del riel.
 
 Esa decisión es lo que permite que la traza se lea: una línea de un píxel con nodos de once
 necesita una superficie sin ruido. Cualquier sombra compite con ella.
@@ -326,8 +329,8 @@ resuelve rellenando un rectángulo.
 
 ### Navigation
 
-El riel lateral es la navegación principal a partir de 1024px: una línea de fondo en `line`,
-una línea de progreso en verde que se escala verticalmente según el scroll, y un nodo por
+El riel lateral es la navegación principal a partir de 1024px: una línea de fondo en `line`
+al 40 %, una línea de progreso en verde que se escala verticalmente según el scroll, y un nodo por
 sección. El nodo de la sección actual es **el único relleno verde de la página**. Las
 etiquetas están ocultas por opacidad y aparecen al enfocar, al pasar por encima, o de forma
 permanente desde 1280px.

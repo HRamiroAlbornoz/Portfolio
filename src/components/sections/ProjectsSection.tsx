@@ -44,12 +44,18 @@ export function ProjectsSection({
               {project.name}
             </h3>
 
-            <p className="font-mono text-eyebrow uppercase text-pending">
+            <p
+              className="font-mono text-eyebrow uppercase text-pending"
+              lang={project.language}
+            >
               {project.role} · {project.year}
             </p>
 
             {project.image !== undefined && (
-              <div className="relative aspect-video w-full overflow-hidden rounded border border-line bg-ink">
+              <div
+                className="relative aspect-video w-full overflow-hidden rounded border border-line bg-ink"
+                lang={project.language}
+              >
                 <Image
                   alt={project.image.alt}
                   className="object-cover"
@@ -60,11 +66,14 @@ export function ProjectsSection({
               </div>
             )}
 
-            <p className="max-w-prose text-body text-muted">
+            <p className="max-w-prose text-body text-muted" lang={project.language}>
               {project.summary}
             </p>
 
-            <ul className="flex list-disc flex-col gap-1 pl-5 text-body text-muted">
+            <ul
+              className="flex list-disc flex-col gap-1 pl-5 text-body text-muted"
+              lang={project.language}
+            >
               {project.highlights.map((highlight) => (
                 <li key={highlight}>{highlight}</li>
               ))}

@@ -47,12 +47,12 @@
       "line": {
         "role": "neutral",
         "displayName": "Filete",
-        "canonical": "#ddd5ca"
+        "canonical": "#8e857c"
       },
       "line-dark": {
         "role": "neutral",
         "displayName": "Filete (oscuro)",
-        "canonical": "#3a3630"
+        "canonical": "#78736b"
       },
       "fore": {
         "role": "neutral",
@@ -163,7 +163,7 @@
       "refersTo": "trace-node",
       "description": "Componente distintivo. Navegación a partir de 1024px. El nodo actual es el único relleno verde de la página.",
       "html": "<nav class=\"ds-rail\"><span class=\"ds-rail-track\"></span><span class=\"ds-rail-progress\"></span><ul><li><a href=\"#\"><span class=\"ds-rail-node\"></span><span class=\"ds-rail-label\">Sobre mí</span></a></li><li><a href=\"#\" aria-current=\"true\"><span class=\"ds-rail-node ds-rail-node--current\"></span><span class=\"ds-rail-label ds-rail-label--current\">Stack</span></a></li><li><a href=\"#\"><span class=\"ds-rail-node\"></span><span class=\"ds-rail-label\">Proyectos</span></a></li></ul></nav>",
-      "css": ".ds-rail { position: relative; } .ds-rail ul { position: relative; display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; } .ds-rail a { display: flex; align-items: center; gap: 0.75rem; min-height: 2.75rem; text-decoration: none; } .ds-rail-track { position: absolute; top: 0; left: 5px; width: 1px; height: 100%; background: var(--line); } .ds-rail-progress { position: absolute; top: 0; left: 5px; width: 1px; height: 40%; background: var(--trace); } .ds-rail-node { width: 11px; height: 11px; flex-shrink: 0; border: 1px solid var(--line); border-radius: 3.40282e38px; background: var(--ink); transition: border-color 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-rail-node--current { border-color: var(--trace); background: var(--trace); } .ds-rail-label { font-family: var(--stack-mono); font-size: 0.75rem; line-height: 1; letter-spacing: 0.18em; font-weight: 500; text-transform: uppercase; white-space: nowrap; color: var(--muted); } .ds-rail-label--current { color: var(--trace); }"
+      "css": ".ds-rail { position: relative; } .ds-rail ul { position: relative; display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; } .ds-rail a { display: flex; align-items: center; gap: 0.75rem; min-height: 2.75rem; text-decoration: none; } .ds-rail-track { position: absolute; top: 0; left: 5px; width: 1px; height: 100%; background: color-mix(in oklab, var(--line) 40%, transparent); } .ds-rail-progress { position: absolute; top: 0; left: 5px; width: 1px; height: 40%; background: var(--trace); } .ds-rail-node { width: 11px; height: 11px; flex-shrink: 0; border: 1px solid var(--line); border-radius: 3.40282e38px; background: var(--ink); transition: border-color 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-rail-node--current { border-color: var(--trace); background: var(--trace); } .ds-rail-label { font-family: var(--stack-mono); font-size: 0.75rem; line-height: 1; letter-spacing: 0.18em; font-weight: 500; text-transform: uppercase; white-space: nowrap; color: var(--muted); } .ds-rail-label--current { color: var(--trace); }"
     },
     {
       "name": "Traza del stack",

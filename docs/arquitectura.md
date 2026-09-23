@@ -504,6 +504,27 @@ Lleva `hrefLang` y **no** `lang`: `hrefLang` describe el idioma del destino, que
 `lang` habría declarado que el contenido del enlace está en el otro idioma, y habría hecho
 que un lector de pantalla leyera la descripción en español con pronunciación inglesa.
 
+### Los proyectos declaran su propio idioma
+
+Los textos de los proyectos siguen en español en `/en`, y durante meses quedaron dentro de
+`<html lang="en">`: un lector de pantalla los leía con fonética inglesa. La revisión de diseño
+del 21/09/2026 lo marcó como P0. **Lighthouse dio 100 en accesibilidad igual**, porque no tiene
+forma de saber en qué idioma está escrito un párrafo.
+
+Cada proyecto tiene ahora un campo `language` —con el mismo `z.enum(LOCALES)` que ya usaba el
+CV—, y `ProjectsSection` lo pone como `lang` en cuatro bloques: el rol, el resumen, los logros
+y el contenedor de la captura, que es de donde el `alt` hereda el idioma.
+
+Dos alternativas descartadas:
+
+- **`lang` en la tarjeta entera.** Es un solo atributo, pero la tarjeta también contiene
+  «Code» y «Live», que vienen de la interfaz en inglés: habrían quedado declarados en español.
+  El nombre y las tecnologías tampoco lo llevan, porque son nombres propios.
+- **Un campo opcional, presente solo cuando el idioma difiere del de la página.** Parece más
+  económico, pero obliga a quien carga un proyecto a acordarse de algo que no ve. Obligatorio,
+  el compilador lo pide en cada proyecto nuevo, y **traducir un proyecto es cambiar un dato**:
+  ningún componente sabe qué proyectos están traducidos.
+
 ---
 
 ## Indexación

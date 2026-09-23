@@ -185,6 +185,7 @@ export const educationSchema = z.array(educationEntrySchema).min(1);
 
 export const projectSchema = z.object({
   slug,
+  language: z.enum(LOCALES),
   name: headline,
   role: headline,
   summary: paragraph,
