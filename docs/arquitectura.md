@@ -65,9 +65,28 @@ dos idiomas se encuentran, así que ahí se comparan los `id` de sección, los `
 stack y los `slug` de proyecto. Si no coinciden, el build para con un mensaje que dice qué
 difiere.
 
-Ese chequeo hacía falta porque la deriva era **silenciosa**: `labelFor` cae al `id` crudo si
-falta una etiqueta, así que una sección sin traducir se habría renderizado como `about` en
-lugar de romper nada.
+Ese chequeo hacía falta porque la deriva era **silenciosa**: la función que buscaba el título
+de cada sección caía al `id` crudo si faltaba una etiqueta, así que una sección sin traducir se
+habría renderizado como `about` en lugar de romper nada. La comparación es **en orden**, no
+como conjunto: reordenar las secciones de un idioma y olvidarse del otro también detiene el
+build.
+
+### El orden de la página sale de `sections.ts`
+
+`sections.ts` dice qué secciones existen y en qué orden, y **dos cosas** lo leen: el riel y la
+página. `SiteHome` recorre ese array y dibuja cada sección con un mapa de `id` a componente,
+tipado como `Record<SectionId, …>`: si se suma un `id` al esquema y no se le asigna componente,
+no compila.
+
+Hasta septiembre de 2026 eso no era así. La página tenía el orden **escrito a mano en el JSX**,
+y solo el riel leía el archivo, aunque la documentación afirmaba lo contrario. Reordenar
+`sections.ts` habría cambiado el riel y dejado la página igual, y el desfase no es cosmético:
+el riel calcula la sección activa recorriendo el array y quedándose con la última cuyo borde
+ya pasó la línea de llegada, así que con los dos órdenes distintos **enciende la sección
+equivocada**. Se detectó al ir a reordenar Proyectos y Stack.
+
+Se descartó mantener el JSX y reordenarlo a mano cada vez: son dos lugares que tienen que
+coincidir y nada que los obligue.
 
 **Ningún componente importa contenido.** Todos lo reciben por props, y quien resuelve el
 idioma es la página o el documento. Eso mantiene la frontera servidor/cliente donde estaba y

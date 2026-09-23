@@ -109,25 +109,45 @@ archivos de ruta**, o las cachés externas siguen sirviendo la vieja.
 
 ### 2 · La composición
 
-2.1 **Proyectos aparece antes que Stack.** Se cambia el orden en `src/content/{es,en}/sections.ts`,
-que es un archivo de datos: ningún componente se toca. El riel refleja el orden nuevo sin
-cambios, porque lee de ahí.
+2.1 **Proyectos aparece antes que Stack**, y el orden se cambia **solo** en
+`src/content/{es,en}/sections.ts`. La primera versión de este criterio afirmaba que eso ya era
+así, y era falso: la página tenía el orden escrito a mano en `SiteHome`, y solo el riel leía
+el archivo. Por eso esta entrega incluye que `SiteHome` dibuje las secciones recorriendo
+`sections`, verificado como refactor puro —el cuerpo de las dos páginas salió idéntico
+carácter por carácter— **antes** de cambiar el orden.
 
 2.2 **El riel sigue encendiendo la sección correcta** después del reordenamiento, en los dos
 idiomas, incluidos el tope de la página y el final del scroll. Es la verificación que más
 importa acá: cambiar el orden mueve todos los desplazamientos.
 
-2.3 **La sección Contacto tiene arquitectura.** El mail deja de ser un enlace de 12 px y pasa a
-ser el elemento tipográficamente más grande de la sección; hay una frase que dice qué pasa
-cuando alguien escribe; los dos CV están repetidos ahí. Los ~350 px reservados por el riel se
-ocupan con contenido en vez de quedar vacíos.
+2.3 **La sección Contacto tiene arquitectura.** El mail deja de ser un enlace en cuerpo de
+texto y pasa a ser el elemento tipográficamente más grande de la sección después del título; hay
+una frase que dice qué pasa cuando alguien escribe; los dos CV están repetidos ahí. El espacio
+reservado por el riel se ocupa con contenido en vez de quedar vacío.
+
+Medido a 1440 × 900: el mail pasó de 17 px a **28 px** (`subtitle`), la frase es *"Respondo en
+menos de 24 horas hábiles"* —un compromiso que eligió Hernán—, y de los 450 px de la sección
+el contenido ocupa **316**. A 320 px el mail entra con margen y no hay scroll horizontal.
 
 2.4 **La reserva de `50vh` de la última sección sigue cumpliendo su función técnica**: las dos
 últimas secciones no terminan en el mismo desplazamiento.
 
-2.5 **La biografía no cierra con una afirmación no verificable.** El párrafo que hoy termina en
-*"lo que traigo además del stack es una forma de trabajar"* se reemplaza por algo comprobable,
-alineado con el posicionamiento de `PRODUCT.md`. El texto lo aprueba Hernán antes de entrar.
+2.5 **La biografía deja de cerrar con "una forma de trabajar"**, que es el posicionamiento
+que `PRODUCT.md` descarta. El texto lo decide Hernán.
+
+**Decisión de Hernán, registrada tal cual:** el segundo párrafo pasa a ser *"Full Stack
+Developer construyendo aplicaciones web modernas con un enfoque de desarrollo guiado por
+especificaciones (SDD) potenciado por IA. Enfocado en código limpio, escalable y mantenible."*
+Se le propusieron tres versiones que presentaban el SDD como algo comprobable —la spec y los
+criterios de este sitio están en el repositorio— y eligió la suya. **El criterio original
+pedía un cierre verificable, y este no lo es**: "limpio, escalable y mantenible" es el tipo de
+afirmación que `docs/agregar-proyecto.md` desaconseja. Queda como decisión del autor, no como
+criterio cumplido, y la `critique` final puede señalarlo.
+
+La contradicción de disponibilidad —la bio y la portada decían "en remoto" y excluían Tucumán—
+se resolvió en esta misma entrega: la bio ya no nombra la modalidad, y la portada dice
+*"Disponible en remoto o en Tucumán"*. La imagen de previsualización muestra esa línea, así
+que se tocaron los dos archivos de ruta, y las dos URL de `og:image` cambiaron de hash.
 
 2.6 **El cambio entra en los dos idiomas.**
 

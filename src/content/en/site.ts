@@ -8,12 +8,13 @@ export const site = siteSchema.parse({
   tagline:
     "I build web applications end to end: React and Next.js on the interface, Node.js and PostgreSQL on the API. Tested and in production.",
   location: "San Miguel de Tucumán, Argentina",
-  availability: "Available for remote work",
+  availability: "Available remotely or in Tucumán",
   languages: "Native Spanish · English B1 (EFSET)",
   email: "hralborn@hotmail.com",
+  contactNote: "I reply within one business day.",
   bio: [
     "Full Stack Developer trained at Henry, with React, Next.js and TypeScript on the interface and Node.js, Express and PostgreSQL on the server. I built complete REST APIs —JWT authentication, automated tests and production deploys— working in a team with Git Flow, code review and sprints.",
-    "I am looking for my first developer role, remote. What I bring beyond the stack is a way of working: understand the problem before writing code, keep it simple, leave it tested, and speak up early when something gets stuck.",
+    "Full Stack Developer building modern web applications with an AI-powered spec-driven development (SDD) approach. Focused on clean, scalable and maintainable code.",
   ],
   socialLinks: [
     { label: "GitHub", url: "https://github.com/HRamiroAlbornoz" },

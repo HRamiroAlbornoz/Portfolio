@@ -59,7 +59,10 @@ Ahí mismo hay una validación cruzada entre idiomas: los `id` de sección, los 
 stack y los `slug` de proyecto tienen que coincidir. Zod valida cada idioma por separado y no
 vería la divergencia; esto sí. **Ningún componente importa contenido**: lo reciben por props.
 
-`sections.ts` sigue siendo la única fuente de verdad de qué secciones existen y en qué orden.
+`sections.ts` es la única fuente de verdad de qué secciones existen y en qué orden: lo leen el
+riel y `SiteHome`, que dibuja las secciones recorriendo ese array. **No escribir el orden a mano
+en el JSX**: el riel calcula la sección activa según el orden del array, y si no coincide con
+el de la página enciende la equivocada.
 
 ### Los tokens de diseño viven una sola vez
 

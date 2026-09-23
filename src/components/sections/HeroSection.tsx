@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 
+import { ResumeLinks } from "@/components/ui/ResumeLinks";
 import type { Site } from "@/lib/schemas";
 
 type HeroSectionProps = {
@@ -28,20 +29,7 @@ export function HeroSection({ languageLink, site }: HeroSectionProps) {
         {site.location} · {site.languages}
       </p>
 
-      <ul className="flex flex-wrap gap-x-6 gap-y-2">
-        {site.resumes.map((resume) => (
-          <li key={resume.language}>
-            <a
-              className="inline-flex min-h-11 items-center font-mono text-eyebrow uppercase text-trace underline underline-offset-4"
-              download
-              href={resume.path}
-              hrefLang={resume.language}
-            >
-              CV · {resume.label}
-            </a>
-          </li>
-        ))}
-      </ul>
+      <ResumeLinks resumes={site.resumes} />
     </header>
   );
 }

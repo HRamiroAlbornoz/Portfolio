@@ -56,9 +56,9 @@ en español, y Tucumán presencial o híbrido.
 El sitio sirve español en `/` e inglés en `/en`. Se llega desde LinkedIn, desde los dos CV en
 PDF, o por un enlace compartido directamente.
 
-**Hecho de producto sin resolver:** la línea de disponibilidad dice "Disponible para trabajar
-en remoto", lo que excluye el tercer mercado. La contradicción está identificada y todavía no
-corregida.
+La línea de disponibilidad dice "Disponible en remoto o en Tucumán", que cubre los tres. Hasta
+septiembre de 2026 decía "Disponible para trabajar en remoto" —y la bio repetía "en remoto"—,
+lo que excluía el tercer mercado.
 
 ## Capabilities and Constraints
 
