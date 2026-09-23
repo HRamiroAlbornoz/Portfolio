@@ -116,6 +116,15 @@ export const uiSchema = z.object({
     label: label,
     description: label,
   }),
+  hero: z.object({
+    notes: z.object({
+      who: label,
+      what: label,
+      availability: label,
+      where: label,
+      resumes: label,
+    }),
+  }),
   notFound: z.object({
     code: label,
     title: headline,

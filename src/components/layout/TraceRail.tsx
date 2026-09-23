@@ -86,6 +86,7 @@ function findCurrentSection(
 export function TraceRail({ label, sections }: TraceRailProps) {
   const railRef = useRef<HTMLElement>(null);
   const [activeId, setActiveId] = useState<SectionId | null>(null);
+  const [isAtEntry, setIsAtEntry] = useState(true);
 
   useEffect(() => {
     const rail = railRef.current;
@@ -115,6 +116,7 @@ export function TraceRail({ label, sections }: TraceRailProps) {
 
       rail.style.setProperty(SCROLL_PROGRESS_PROPERTY, progress.toFixed(4));
       setActiveId(active);
+      setIsAtEntry(active === null);
     };
 
     const schedulePaint = () => {
@@ -145,7 +147,8 @@ export function TraceRail({ label, sections }: TraceRailProps) {
     <nav
       ref={railRef}
       aria-label={label}
-      className="pointer-events-none fixed top-1/2 left-[max(1.5rem,calc(50%-33rem))] z-20 hidden -translate-y-1/2 lg:block"
+      className="pointer-events-none fixed top-1/2 left-[max(1.5rem,calc(50%-33rem))] z-20 hidden -translate-y-1/2 transition-[opacity,visibility] duration-300 lg:block"
+      data-at-entry={isAtEntry ? "true" : undefined}
     >
       <div className="relative">
         <span

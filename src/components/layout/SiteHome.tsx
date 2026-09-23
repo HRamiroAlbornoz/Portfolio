@@ -51,12 +51,13 @@ export function SiteHome({ locale }: SiteHomeProps) {
       <TraceRail label={ui.navigation.railLabel} sections={sections} />
 
       <main
-        className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-20 px-6 py-24 focus-visible:outline-none"
+        className="flex w-full flex-1 flex-col gap-20 pb-24 focus-visible:outline-none"
         id="main-content"
         tabIndex={-1}
       >
         <HeroSection
           languageLink={<LanguageLink language={ui.language} />}
+          notes={ui.hero.notes}
           site={site}
         />
 

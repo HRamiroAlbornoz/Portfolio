@@ -183,6 +183,44 @@ no cumple.
 y dónde está el CV— se obtienen en el primer viewport **sin scrollear**, a 320 px y a 1440 px.
 Se prueba con alguien ajeno al proyecto.
 
+**Hoy no se cumple a 320 × 640**: medido el 22/09/2026, los enlaces del CV quedan debajo del
+borde inferior. Las notas nuevas no pueden empeorarlo: en móvil van en línea, nunca apiladas
+sobre cada dato.
+
+3.10 **El riel oculto no recibe foco.** Mientras la primera pantalla está a la vista, el riel se
+desvanece; oculto, lleva también `visibility: hidden`, así que sus enlaces salen del orden de
+Tab y del árbol de accesibilidad. La opacidad sola no alcanza: deja enlaces invisibles que
+reciben el foco. Sin JavaScript, el riel queda visible como hoy.
+
+3.11 **El andamiaje de la primera pantalla no se lee dos veces.** Las notas en ámbar, la traza y
+los nodos llevan `aria-hidden="true"`: las notas repiten, como pregunta, lo que el contenido ya
+dice. Un lector de pantalla recorre la primera pantalla igual que antes del cambio.
+
+**Estado al cerrar la entrega 3**, medido sobre el build de producción:
+
+| Criterio | Estado | Evidencia |
+|---|---|---|
+| 3.1 Especificidad | pendiente | Lo mide la `critique` final de la entrega 5 |
+| 3.2 Metáfora legible sin `DESIGN.md` | **pendiente** | Requiere una persona ajena al proyecto |
+| 3.3 Quieto y completo | cumplido | Los `@keyframes` declaran solo `from`: el reposo es el CSS base |
+| 3.4 Sin estados intermedios con movimiento reducido | cumplido | Verificado en un navegador con la preferencia activa |
+| 3.5 Solo `opacity` y `transform` | cumplido | Ningún texto de la primera pantalla tiene animación |
+| 3.6 CLS ≤ 0.1 | cumplido | **0.00** a 360 × 640, CPU 4× y Slow 4G |
+| 3.7 Se percibe a 320 px | cumplido | Traza, nodos y tramos; las notas se ocultan por debajo de 640 |
+| 3.8 Un solo `<h1>` | cumplido | HTML servido de `/` y `/en` |
+| 3.9 Cuatro respuestas sin scrollear | cumplido en medida, **pendiente** con persona | CV hasta 613 px en `/` y 628 en `/en` a 320 × 640 |
+| 3.10 El riel oculto no recibe foco | cumplido | Oculto: 0 enlaces enfocables; visible: 5; sin JavaScript, visible |
+| 3.11 Andamiaje oculto | cumplido | 5 notas y 16 piezas de traza con `aria-hidden` en `/` y `/en` |
+
+Lighthouse siguió en **100** en accesibilidad, SEO y buenas prácticas en las doce
+combinaciones, con 53 auditorías aprobadas y ninguna fallida.
+
+**Revisión final de Impeccable:** dos rondas. La primera devolvió `fix` con siete puntos; la
+segunda puntuó resueltos la alineación del nodo del CV, la línea de ubicación en móvil, la
+disponibilidad fuera del verde y la higiene del CSS. Quedaron abiertos y se cerraron después:
+los tramos en la imagen de previsualización, el nombre del espacio de no separación y
+`DESIGN.md` con su anexo. La prueba con una persona ajena sigue abierta.
+
 ### 4 · Los proyectos
 
 4.1 **La sección aguanta el crecimiento y la rotación**: se ve bien con cero, uno, tres y ocho

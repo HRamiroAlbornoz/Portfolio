@@ -12,6 +12,15 @@ export const ui = uiSchema.parse({
     label: "EN",
     description: "Ver este sitio en inglés",
   },
+  hero: {
+    notes: {
+      who: "¿Quién?",
+      what: "¿Qué hace?",
+      availability: "¿Disponible?",
+      where: "¿Dónde?",
+      resumes: "CV",
+    },
+  },
   notFound: {
     code: "Error 404",
     title: "Esta página no existe",

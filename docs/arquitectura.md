@@ -295,6 +295,35 @@ el borde de la traza caía justo sobre el inicio del párrafo.
 En móvil no hay reemplazo, y es una decisión: recorrer con el dedo es lo natural ahí, y
 una barra fija se comería el ancho de lectura.
 
+### Se oculta mientras se ve la primera pantalla
+
+Desde septiembre de 2026 la primera pantalla dibuja su propia traza, y el riel le cede el
+lugar: mientras ninguna sección cruzó la línea de llegada —el mismo cálculo que ya daba "ninguna
+sección activa" en el tope—, el componente marca el `<nav>` con `data-at-entry`, y una regla de
+`globals.css` lo oculta con `opacity` y `visibility`.
+
+No suma un componente de cliente: es un estado más de `TraceRail`, que ya lo era. Y la regla
+exige que `<html>` tenga `data-theme-resolved`, que solo pone el script de tema: sin JavaScript
+no hay marca y el riel queda visible como antes. El porqué de `visibility` y del relevo está en
+[`sistema-de-diseno.md`](./sistema-de-diseno.md#el-relevo-del-riel).
+
+### La columna la declara cada sección, no `main`
+
+Hasta septiembre de 2026, `main` llevaba `max-w-3xl px-6` y todo lo que contenía quedaba
+dentro de esa columna. La primera pantalla necesitaba salirse de ella —las notas cuelgan en el
+margen desde 1280 px—, así que la columna bajó a `PageSection` y a la propia primera pantalla.
+`main` conserva el aire inferior y el espacio entre secciones.
+
+El cambio se verificó como refactor puro **antes** de tocar la primera pantalla: en cuatro
+anchos, los 205 elementos de contenido y el pie quedaron en la misma posición y con el mismo
+tamaño al décimo de píxel, y el alto total de la página no cambió. Solo cambiaron las seis
+cajas contenedoras, que ahora incluyen su propio margen lateral.
+
+`PageSection` lleva `w-full` a propósito: una sección centrada con márgenes automáticos
+dentro de un contenedor flex se achica al ancho de su contenido si no se le pide todo el
+ancho. El 404 tiene su propio `main` con la columna escrita a mano y no pasa por
+`PageSection`: los dos quedan distintos a propósito.
+
 ---
 
 ## Los iconos de tecnologías

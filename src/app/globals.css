@@ -99,6 +99,22 @@
   --text-eyebrow--line-height: 1;
   --text-eyebrow--letter-spacing: 0.18em;
   --text-eyebrow--font-weight: 500;
+
+  --animate-trace-draw: trace-draw 150ms linear both;
+  --animate-trace-node: trace-node 0.3s ease-out both;
+
+  @keyframes trace-draw {
+    from {
+      transform: scaleY(0);
+    }
+  }
+
+  @keyframes trace-node {
+    from {
+      opacity: 0;
+      transform: scale(0.6);
+    }
+  }
 }
 
 @layer base {
@@ -111,6 +127,11 @@
     main > section:last-of-type {
       min-height: 50vh;
     }
+  }
+
+  :root[data-theme-resolved] [data-at-entry] {
+    opacity: 0;
+    visibility: hidden;
   }
 
   body {

@@ -4,6 +4,7 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
 import { ImageResponse } from "next/og";
+import type { ReactNode } from "react";
 
 import type { Site } from "@/lib/schemas";
 
@@ -16,7 +17,14 @@ const FORE = "#f2efea";
 const TRACE = "#9fc27c";
 
 const NODE_SIZE = 14;
+const NODE_BORDER = 2;
 const RAIL_WIDTH = 2;
+const RAIL_GAP = 40;
+const TICK_WIDTH = 24;
+const STEP_GAP = 28;
+const PADDING_TOP = 68;
+const PADDING_LEFT = 88;
+const NAME_NODE_OFFSET = 36;
 
 const fontsDirectory = join(process.cwd(), "assets", "fonts");
 
@@ -27,17 +35,42 @@ const [archivoBold, instrumentSansRegular, jetBrainsMonoRegular] =
     readFile(join(fontsDirectory, "JetBrainsMono-Regular.woff")),
   ]);
 
-function TraceNode() {
+type TraceStepProps = {
+  children: ReactNode;
+  nodeOffset: number;
+};
+
+function TraceStep({ children, nodeOffset }: TraceStepProps) {
   return (
-    <div
-      style={{
-        display: "flex",
-        width: NODE_SIZE,
-        height: NODE_SIZE,
-        borderRadius: NODE_SIZE / 2,
-        backgroundColor: TRACE,
-      }}
-    />
+    <div style={{ display: "flex", alignItems: "flex-start" }}>
+      <div
+        style={{
+          display: "flex",
+          position: "relative",
+          flexShrink: 0,
+          width: NODE_SIZE,
+          height: NODE_SIZE,
+          marginTop: nodeOffset,
+          borderRadius: NODE_SIZE / 2,
+          border: `${NODE_BORDER}px solid ${TRACE}`,
+          backgroundColor: INK,
+        }}
+      />
+      <div
+        style={{
+          display: "flex",
+          flexShrink: 0,
+          width: TICK_WIDTH,
+          height: RAIL_WIDTH,
+          marginTop: nodeOffset + (NODE_SIZE - RAIL_WIDTH) / 2,
+          marginRight: RAIL_GAP - TICK_WIDTH,
+          backgroundColor: TRACE,
+        }}
+      />
+      <div style={{ display: "flex", flexDirection: "column" }}>
+        {children}
+      </div>
+    </div>
   );
 }
 
@@ -47,54 +80,30 @@ export function renderPreviewImage(site: Site): ImageResponse {
       <div
         style={{
           display: "flex",
+          position: "relative",
+          flexDirection: "column",
           width: "100%",
           height: "100%",
-          padding: "68px 88px",
+          padding: `${PADDING_TOP}px ${PADDING_LEFT}px 0`,
           backgroundColor: INK,
         }}
       >
         <div
           style={{
             display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            width: NODE_SIZE,
-            marginRight: 40,
+            position: "absolute",
+            top: PADDING_TOP + NAME_NODE_OFFSET + NODE_SIZE / 2,
+            bottom: 0,
+            left: PADDING_LEFT + (NODE_SIZE - RAIL_WIDTH) / 2,
+            width: RAIL_WIDTH,
+            backgroundColor: TRACE,
           }}
-        >
-          <TraceNode />
-          <div
-            style={{
-              display: "flex",
-              flexGrow: 1,
-              width: RAIL_WIDTH,
-              backgroundColor: TRACE,
-            }}
-          />
-          <TraceNode />
-        </div>
+        />
 
         <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            flexGrow: 1,
-            justifyContent: "space-between",
-          }}
+          style={{ display: "flex", flexDirection: "column", gap: STEP_GAP }}
         >
-          <div
-            style={{
-              display: "flex",
-              fontFamily: "JetBrains Mono",
-              fontSize: 30,
-              letterSpacing: "0.18em",
-              color: TRACE,
-            }}
-          >
-            {site.role.toUpperCase()}
-          </div>
-
-          <div style={{ display: "flex", flexDirection: "column" }}>
+          <TraceStep nodeOffset={NAME_NODE_OFFSET}>
             <div
               style={{
                 display: "flex",
@@ -107,39 +116,63 @@ export function renderPreviewImage(site: Site): ImageResponse {
             >
               {site.name}
             </div>
+          </TraceStep>
 
+          <TraceStep nodeOffset={12}>
             <div
               style={{
                 display: "flex",
-                marginTop: 30,
+                fontFamily: "Archivo",
+                fontSize: 40,
+                lineHeight: 1.15,
+                letterSpacing: "-0.02em",
+                color: MUTED,
+              }}
+            >
+              {site.role}
+            </div>
+            <div
+              style={{
+                display: "flex",
+                marginTop: 12,
                 maxWidth: 880,
                 fontFamily: "Instrument Sans",
                 fontSize: 30,
                 lineHeight: 1.5,
-                color: MUTED,
+                color: FORE,
               }}
             >
               {site.tagline}
             </div>
-          </div>
+          </TraceStep>
 
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              fontFamily: "JetBrains Mono",
-              fontSize: 26,
-              letterSpacing: "0.08em",
-              color: MUTED,
-            }}
-          >
-            <div style={{ display: "flex" }}>
+          <TraceStep nodeOffset={4}>
+            <div
+              style={{
+                display: "flex",
+                fontFamily: "JetBrains Mono",
+                fontSize: 26,
+                letterSpacing: "0.08em",
+                color: FORE,
+              }}
+            >
               {site.availability.toUpperCase()}
             </div>
-            <div style={{ display: "flex", marginTop: 14 }}>
+          </TraceStep>
+
+          <TraceStep nodeOffset={4}>
+            <div
+              style={{
+                display: "flex",
+                fontFamily: "JetBrains Mono",
+                fontSize: 26,
+                letterSpacing: "0.08em",
+                color: MUTED,
+              }}
+            >
               {site.location.toUpperCase()}
             </div>
-          </div>
+          </TraceStep>
         </div>
       </div>
     ),

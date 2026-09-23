@@ -6,7 +6,7 @@ type ResumeLinksProps = {
 
 export function ResumeLinks({ resumes }: ResumeLinksProps) {
   return (
-    <ul className="flex flex-wrap gap-x-6 gap-y-2">
+    <ul className="flex flex-wrap gap-x-4 gap-y-2">
       {resumes.map((resume) => (
         <li key={resume.language}>
           <a
