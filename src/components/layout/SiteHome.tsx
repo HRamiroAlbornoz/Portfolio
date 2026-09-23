@@ -1,3 +1,5 @@
+import { Fragment, type ReactNode } from "react";
+
 import { TraceRail } from "@/components/layout/TraceRail";
 import { AboutSection } from "@/components/sections/AboutSection";
 import { ContactSection } from "@/components/sections/ContactSection";
@@ -8,11 +10,7 @@ import { StackSection } from "@/components/sections/StackSection";
 import { LanguageLink } from "@/components/ui/LanguageLink";
 import { getContent } from "@/content";
 import type { Locale } from "@/lib/locale";
-import type { SectionId, Sections } from "@/lib/schemas";
-
-function labelFor(sections: Sections, id: SectionId): string {
-  return sections.find((section) => section.id === id)?.label ?? id;
-}
+import type { SectionId } from "@/lib/schemas";
 
 type SiteHomeProps = {
   locale: Locale;
@@ -21,6 +19,32 @@ type SiteHomeProps = {
 export function SiteHome({ locale }: SiteHomeProps) {
   const { education, projects, sections, site, stack, ui } =
     getContent(locale);
+
+  const sectionRenderers: Record<SectionId, (title: string) => ReactNode> = {
+    about: (title) => <AboutSection paragraphs={site.bio} title={title} />,
+    stack: (title) => <StackSection stack={stack} title={title} />,
+    projects: (title) => (
+      <ProjectsSection
+        emptyLabel={ui.projects.empty}
+        liveLabel={ui.projects.live}
+        projects={projects}
+        repositoryLabel={ui.projects.repository}
+        title={title}
+      />
+    ),
+    education: (title) => (
+      <EducationSection entries={education} title={title} />
+    ),
+    contact: (title) => (
+      <ContactSection
+        contactNote={site.contactNote}
+        email={site.email}
+        resumes={site.resumes}
+        socialLinks={site.socialLinks}
+        title={title}
+      />
+    ),
+  };
 
   return (
     <>
@@ -36,31 +60,11 @@ export function SiteHome({ locale }: SiteHomeProps) {
           site={site}
         />
 
-        <AboutSection
-          paragraphs={site.bio}
-          title={labelFor(sections, "about")}
-        />
-
-        <StackSection stack={stack} title={labelFor(sections, "stack")} />
-
-        <ProjectsSection
-          emptyLabel={ui.projects.empty}
-          liveLabel={ui.projects.live}
-          projects={projects}
-          repositoryLabel={ui.projects.repository}
-          title={labelFor(sections, "projects")}
-        />
-
-        <EducationSection
-          entries={education}
-          title={labelFor(sections, "education")}
-        />
-
-        <ContactSection
-          email={site.email}
-          socialLinks={site.socialLinks}
-          title={labelFor(sections, "contact")}
-        />
+        {sections.map((section) => (
+          <Fragment key={section.id}>
+            {sectionRenderers[section.id](section.label)}
+          </Fragment>
+        ))}
       </main>
     </>
   );

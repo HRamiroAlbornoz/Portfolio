@@ -94,6 +94,7 @@ export const siteSchema = z.object({
   availability: label,
   languages: label,
   email: z.email(),
+  contactNote: headline,
   bio: z.array(paragraph).min(1).max(MAX_BIO_PARAGRAPHS),
   socialLinks: z.array(socialLinkSchema).min(1),
   resumes: z

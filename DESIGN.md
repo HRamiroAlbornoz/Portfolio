@@ -312,6 +312,8 @@ resuelve rellenando un rectángulo.
 - **Enlace de contenido:** verde de traza, subrayado con `underline-offset-4`, en cuerpo.
 - **Enlace-etiqueta:** el mismo tratamiento en monoespaciada, mayúsculas y eyebrow. Es el
   formato de los repositorios, las redes, los CV y el pie.
+- **Enlace de contacto:** el mail de la sección Contacto, en display y `subtitle`, verde y
+  subrayado. Es el único enlace grande del sitio, y es el destino de toda la página.
 - **Área táctil:** `min-h-11` (2.75rem) en todos, incluso cuando el texto es más chico.
 - **Foco:** contorno de 2px en verde de traza. **El ancho y el color no se sobrescriben
   nunca**; la separación sí se adapta al elemento: 3px por defecto en la base, 2px en los
