@@ -1,7 +1,7 @@
 ---
 version: 1
 primary_target: src/app/(es)/page.tsx
-related_targets: ["src/app/(en)/en/page.tsx", "src/components/layout/SiteHome.tsx", "src/components/sections/HeroSection.tsx", "src/components/sections/ProjectsSection.tsx", "src/components/sections/ContactSection.tsx", "src/app/globals.css"]
+related_targets: ["src/app/(en)/en/page.tsx", "src/components/layout/SiteHome.tsx", "src/components/sections/HeroSection.tsx", "src/components/sections/ProjectsSection.tsx", "src/components/sections/ContactSection.tsx", "src/components/layout/TraceRail.tsx", "src/components/ui/PageSection.tsx", "src/lib/preview-image.tsx", "src/app/globals.css"]
 ---
 
 # Superficie: la página del portfolio
@@ -162,3 +162,29 @@ Intención, no CSS.
 - Si un proyecto se destaca: se marca desde el archivo de contenido, nunca desde un componente
   que nombre un `slug`.
 - El criterio de aceptación del objetivo: está en `docs/spec.md`, con la línea de base medida.
+- El texto de las notas de la primera pantalla: son las preguntas del visitante, elegidas por
+  Hernán. No se reemplazan por rótulos de campo («Nombre:», «Rol:»).
+
+## Direction contract
+
+**THESIS.** La primera pantalla es una ejecución anotada: una traza baja por el margen, cada dato
+cuelga de un paso y cada paso lleva, en ámbar, la pregunta del visitante que responde. Rechaza la
+tarjeta de presentación centrada, que es lo que hoy muestra.
+
+**OWN-WORLD.** Trazado sin cambios: siete tokens, la gramática de la sección Stack —línea de un
+píxel, nodos de 11 px, tramos de 1rem— y el ámbar como anotación inerte en mono y eyebrow.
+
+**STORY.** El reclutador lee cuatro respuestas junto a sus cuatro preguntas; el técnico reconoce
+una traza de ejecución y la ve continuar, fuera del borde, hacia Sobre mí.
+
+**FIRST VIEWPORT.** Traza en el margen izquierdo con un nodo por paso: nombre como `<h1>` en
+display, rol, frase, ubicación e idiomas, CV. Notas a la izquierda de cada paso en escritorio y
+en línea en móvil, nunca apiladas: a 320 × 640 el CV se ve sin desplazarse. El botón de idioma
+sigue alineado bajo el de tema. `min-height: calc(100svh - var(--header-height))`. Mientras la
+portada está a la vista, el riel se desvanece; reaparece con la primera sección.
+
+**FORM.** Pasos anotados, cuarto de siete en mi orden, repartido por el sorteo como principal.
+Seed `08078e10`. Camino por código. Interacción firma: la traza se dibuja de arriba hacia abajo y
+los nodos aparecen cuando la línea los alcanza; el texto nunca se mueve.
+
+FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance

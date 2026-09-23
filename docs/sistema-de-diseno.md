@@ -633,17 +633,80 @@ Meter una segunda metáfora en el lugar más visible de la página debilita la p
 
 ## Movimiento
 
-**Hoy el sitio no tiene ninguna animación.** No hay un solo `@keyframes` en `src/`. Lo único
-que se mueve son dos transiciones de estado —color en los nodos y las opciones de tema,
-opacidad en las etiquetas del riel— y el avance de la traza con el scroll, que no es una
-animación sino una variable CSS que el riel actualiza mientras se desplaza la página.
+**El sitio tiene una sola animación: la traza de la primera pantalla se dibuja al cargar.** Lo
+demás son transiciones de estado —color en los nodos y las opciones de tema, opacidad en las
+etiquetas del riel y en su relevo— y el avance de la traza del riel con el scroll, que no es
+una animación sino una variable CSS que el riel actualiza mientras se desplaza la página. Los
+tiempos exactos están en [`DESIGN.md`](../DESIGN.md#components).
 
-**La secuencia de entrada está decidida y no está construida.** Este documento afirmó durante
-meses que existía "un solo momento orquestado al cargar la página: la traza baja y el hero
-aparece en secuencia". Es una decisión tomada, pero nunca se implementó, y la afirmación se
-corrigió al detectarse la deriva. Queda anotada como pendiente, no como hecho.
+Durante meses este documento afirmó que existía "un solo momento orquestado al cargar la
+página: la traza baja y el hero aparece en secuencia", y no existía. Se construyó en septiembre
+de 2026, y **no** como estaba escrito: el hero no aparece. Solo se dibuja la traza.
 
-Cuando se construya, estas son las restricciones que la gobiernan, y el porqué de cada una:
+### El texto nunca se mueve
+
+La secuencia anima la traza, los nodos y sus tramos, y nada más. El nombre, el rol y los CV
+están en su lugar desde el primer fotograma. Hay dos motivos:
+
+- **Un escalonado de textos que suben y aparecen es la animación de entrada por defecto**, la
+  que trae cualquier plantilla. El brief de la superficie la prohíbe por su nombre.
+- **Quien escanea en segundos no puede esperar.** El reclutador tiene que leer las cuatro
+  respuestas de inmediato; si el texto dependiera de la animación, la animación le costaría
+  tiempo justo al público que menos tiene.
+
+Los `@keyframes` declaran **solo `from`**. Sin `to`, el navegador usa como fotograma final el
+estado normal del elemento, así que el reposo es el CSS de siempre: si la animación no corre,
+la pantalla está completa.
+
+### Por qué la traza se dibuja por tramos y no de un trazo
+
+La primera versión dibujaba una sola línea de arriba abajo y encendía cada nodo con un retardo
+fijo. Medido, **no puede sincronizarse**: la línea mide lo que mide la primera pantalla, que
+depende del alto de la ventana, mientras que la altura de cada nodo depende del contenido.
+Con una curva de salida rápida, la línea pasaba por los cinco nodos en los primeros 170 ms y
+los nodos aparecían hasta 560 ms después. Con velocidad constante y dos juegos de retardos por
+ancho, la sincronía era exacta a 320 × 640 y a 1440 × 900, pero los nodos se adelantaban hasta
+**131 ms a 1366 × 768** —la notebook más común— y **286 ms a 1024 × 768**. Ningún juego de
+retardos por ancho lo resuelve, porque el desfase depende también del alto.
+
+Por tramos, cada paso dibuja el suyo, desde su nodo hasta debajo del siguiente, y el nodo
+siguiente aparece cuando ese tramo termina. La sincronía es exacta **por construcción**, en
+cualquier pantalla. El costo es que la velocidad deja de ser constante: el tramo del nombre es
+largo y se dibuja más rápido que los cortos. Se aceptó porque se lee como lo que es, una
+ejecución que avanza paso a paso.
+
+Cada tramo baja 4 px más allá del comienzo del paso siguiente, y ese exceso queda tapado por el
+nodo siguiente, que tiene fondo. Sin eso quedaba un hueco entre tramos.
+
+### El relevo del riel
+
+Con la traza nueva en la primera pantalla, el riel fijo quedaba al lado: dos líneas verticales
+paralelas. El riel se desvanece mientras se ve la primera pantalla y reaparece al llegar la
+primera sección, así la traza nace en la portada y se convierte en la navegación.
+
+**La opacidad sola no alcanza.** Un riel transparente sigue teniendo cinco enlaces en el orden
+de Tab y en el árbol de accesibilidad: quien navega con teclado aterrizaría en enlaces que no
+ve. Oculto lleva también `visibility: hidden`. `visibility` en una transición es discreta y
+favorece al estado visible, así que al ocultarse sigue visible hasta que termina el
+desvanecimiento, y al mostrarse aparece enseguida, sin ningún retardo que escribir.
+
+**Sin JavaScript el riel queda visible.** La regla que lo oculta exige que `<html>` tenga
+`data-theme-resolved`, que solo lo pone el script de tema. El riel se renderiza en el servidor
+marcado como "en la entrada", así que con JavaScript ya está oculto desde el primer fotograma,
+sin parpadeo.
+
+### Por qué las notas desaparecen en móvil
+
+A 320 px una columna de notas se lleva un tercio del ancho y el apellido, en tamaño display,
+deja de entrar. Escritas en vertical en el margen no ocupan ancho, pero cada una se vuelve tan
+alta como su texto e infla los renglones cortos. Por debajo de 640 px la metáfora la llevan la
+traza, los nodos y los tramos.
+
+Entre 640 y 1279 px las notas ocupan una columna dentro de la página y la primera pantalla
+queda corrida respecto de las secciones. Recién desde 1280 hay lugar para colgarlas en el
+margen, donde antes estaba el riel.
+
+### Las restricciones de movimiento, y el porqué de cada una
 
 - **Solo `@keyframes` y `transition`.** Es lo único que el bloque de `prefers-reduced-motion`
   apaga de verdad. Un efecto armado con `position: sticky` y `transform`, con `filter` o con
@@ -667,11 +730,10 @@ colgado para siempre. Con 0.01 ms el evento se dispara de inmediato.
 
 Se anulan las duraciones **y también los retrasos** (`animation-delay`,
 `transition-delay`). Anular solo las duraciones es un error frecuente: la animación pasa
-a durar un instante, pero sigue esperando su retraso antes de empezar. En una secuencia
-escalonada como la que está pendiente para el hero, eso dejaría a quien pidió menos
-movimiento mirando una pantalla vacía durante toda la espera — exactamente el problema que la
-preferencia buscaba evitar. El bloque ya está escrito y anula las dos cosas, así que la
-secuencia nace protegida.
+a durar un instante, pero sigue esperando su retraso antes de empezar. En la secuencia de la
+primera pantalla, con retardos de hasta 750 ms, eso dejaría a quien pidió menos movimiento
+mirando nodos que faltan durante toda la espera. El bloque anula las dos cosas, y se verificó
+en un navegador con la preferencia activa: la primera pantalla aparece completa al instante.
 
 ---
 

@@ -7,7 +7,7 @@ import {
 
 const { site } = getContent("es");
 
-export const alt = `${site.name} — ${site.role}. ${site.availability}`;
+export const alt = `${site.name} — ${site.role}. ${site.availability}. ${site.location}`;
 export const size = PREVIEW_SIZE;
 export const contentType = PREVIEW_CONTENT_TYPE;
 
